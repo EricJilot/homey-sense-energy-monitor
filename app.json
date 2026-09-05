@@ -1,0 +1,41 @@
+{
+  "id": "com.ericj.senseenergymonitor",
+  "version": "0.1.0",
+  "compatibility": ">=10.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Sense Energy Monitor"
+  },
+  "description": {
+    "en": "Port of the Home Assistant Sense Energy Monitor integration for Homey."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "author": {
+    "name": "Eric J"
+  },
+  "drivers": [
+    {
+      "id": "sense_monitor",
+      "name": {
+        "en": "Sense Monitor"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "measure_power",
+        "meter_power"
+      ],
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices"
+        }
+      ]
+    }
+  ]
+}

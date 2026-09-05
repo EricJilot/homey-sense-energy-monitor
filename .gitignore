@@ -1,0 +1,17 @@
+# Node
+node_modules/
+
+# Homey
+.homey/
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
