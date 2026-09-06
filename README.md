@@ -1,57 +1,81 @@
 # Homey Sense Energy Monitor
 
-This project ports the Home Assistant Sense Energy Monitor integration into a Homey app for use on a Homey hub.
+A Homey app that integrates with the Sense Energy Monitor using the [sense-js-sdk](https://github.com/sense/sense-js-sdk) open-source library.
 
-## Project goals
+## Project Goals
 
-- Recreate core Sense telemetry in Homey devices and capabilities
-- Keep logic clear and testable with a Python-first domain layer
-- Ship a stable Homey app package and publish source to GitHub
+- Stream real-time power usage from Sense Energy Monitor into Homey
+- Provide accurate power metrics via Homey capabilities (`measure_power`, `meter_power`)
+- Support configurable polling intervals for power data
+- Maintain a stable, feature-rich Homey app package
 
-## Current structure
+## Architecture
 
-- `app.json`: Homey app manifest
-- `app.js`: Homey app entrypoint
-- `drivers/sense_monitor`: Homey device driver scaffold
-- `python/sense_port`: Python port layer scaffold for integration logic
-- `docs/porting-plan.md`: Step-by-step migration plan
+This app uses a direct JavaScript-first approach powered by the `sense-js-sdk`:
 
-## How this scaffold works
+- `app.json` – Homey app manifest with driver and capability definitions
+- `app.js` – Homey app initialization and SDK lifecycle management
+- `drivers/sense_monitor/` – Device driver handling discovery and settings
+- `drivers/sense_monitor/device.js` – Device instance with polling logic and capability updates
 
-This section explains the role of the files and folders in the scaffold and how data flows between components.
+### Data Flow
 
-- `app.json` � Homey app manifest (metadata, permissions, drivers).
-- `app.js` � Homey app entrypoint. Starts the app, registers drivers, and schedules polling.
-- `drivers/sense_monitor` � Homey device driver scaffold. Implements device capabilities and maps telemetry from the Python port to Homey capabilities.
-- `python/sense_port` � Python port layer for integration logic. Responsible for authentication, long-running data polling, and transforming Sense telemetry into a simple JSON model consumed by the Homey driver.
-- `docs/porting-plan.md` � Step-by-step guide for migrating Sense integration logic from Home Assistant or other sources into the Python port.
+1. **App Init**: `app.js` loads the `sense-js-sdk` and makes it available to drivers
+2. **Pairing**: Driver uses SDK to authenticate with Sense API and discover monitors
+3. **Device Polling**: Each device instance polls Sense API on a configurable interval
+4. **Capability Updates**: Power readings are mapped to Homey capabilities (`measure_power`, `meter_power`)
 
-### Data flow summary:
+## Getting Started
 
-1. The Python client in `python/sense_port` authenticates to the Sense API and pulls telemetry.
-2. Python code normalizes telemetry into a small JSON payload (power, energy, per-circuit values).
-3. The Homey driver (`drivers/sense_monitor`) invokes the Python layer (for example via a subprocess or a local HTTP bridge), receives JSON, and updates device capabilities.
-4. `app.js` orchestrates driver lifecycle and scheduling for polling intervals.
+### Prerequisites
+- Node.js 18+
+- Homey CLI (for development/testing)
+- Sense account with an active Sense Energy Monitor
 
-This added section helps contributors understand where to implement logic and how components interact.
+### Installation
 
-## Quick start
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Install the app on your Homey hub via Homey CLI or the app store
 
-1. Install Node.js LTS and Homey CLI
-2. Install Python 3.11+ and create a virtual environment
-3. Run `npm install` in this repository (after `package.json` is added in the next step)
-4. Implement authentication and data pull in `python/sense_port/client.py`
-5. Connect Homey driver polling to Python ported logic
+### Configuration
 
-## GitHub publishing checklist
+During pairing:
+- **Sense Credentials**: Enter your Sense username and password
+- **Polling Interval**: Configure how often (in milliseconds) to fetch power data (default: 30 seconds)
 
-1. Create a new GitHub repository named `homey-sense-energy-monitor`
-2. Add remote and push:
+## Development
 
-   git remote add origin https://github.com/<your-user>/homey-sense-energy-monitor.git
-   git branch -M main
-   git push -u origin main
+### Running Locally
+```bash
+npm install
+homey app run
+```
 
-## Notes
+### Build & Release
+```bash
+homey app build
+```
 
-This scaffold intentionally starts simple. We will build this in small, testable increments and I can guide each step.
+## Current Features
+
+- ✅ Real-time power monitoring (`measure_power` in watts)
+- ✅ Total energy consumption (`meter_power` in kWh)
+- ✅ Configurable polling intervals
+- ✅ Graceful error handling and device availability status
+
+## Future Enhancements
+
+- Per-circuit power breakdown
+- Historical energy data
+- Alerts/notifications on usage thresholds
+- Additional Sense capabilities as SDK supports them
+
+## Dependencies
+
+- [sense-js-sdk](https://github.com/sense/sense-js-sdk) – Official Sense API JavaScript library (MIT license)
+- homey – Homey framework for local app development
+
+## License
+
+MIT
