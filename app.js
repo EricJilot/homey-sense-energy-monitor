@@ -1,17 +1,19 @@
 'use strict';
 
 const Homey = require('homey');
-const { Senseable } = require('sense-js-sdk');
 
 class SenseEnergyMonitorApp extends Homey.App {
   async onInit() {
     this.log('Sense Energy Monitor app initialized');
     
-    // Store reference to the Sense SDK for use by drivers/devices
-    this.senseLib = Senseable;
+    // Initialize session storage
+    this.senseSession = null;
     
+    // Handle app unload
     this.homey.on('unload', () => {
       this.log('Sense Energy Monitor app unloading');
+      // Clean up session if needed
+      this.senseSession = null;
     });
   }
 }

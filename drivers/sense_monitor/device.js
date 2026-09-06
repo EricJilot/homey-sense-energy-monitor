@@ -1,7 +1,6 @@
 'use strict';
 
 const Homey = require('homey');
-const { Senseable } = require('sense-js-sdk');
 
 class SenseMonitorDevice extends Homey.Device {
   async onInit() {
@@ -10,6 +9,15 @@ class SenseMonitorDevice extends Homey.Device {
     // Initialize device settings
     this.pollingInterval = this.getSetting('pollingInterval') || 30000;
     this.pollIntervalId = null;
+    
+    // Get authenticated session from app
+    this.senseSession = this.homey.app.senseSession;
+    
+    if (!this.senseSession || !this.senseSession.isAuthenticated) {
+      this.error('No authenticated session available. Please re-pair the device.');
+      this.setUnavailable('Authentication required');
+      return;
+    }
     
     // Register capability listeners
     if (this.hasCapability('measure_power')) {
@@ -37,6 +45,23 @@ class SenseMonitorDevice extends Homey.Device {
     this.stopPolling();
   }
   
+  onSettings(oldSettings, newSettings, changedKeys) {
+    this.log('Device settings changed:', changedKeys);
+    
+    // Handle polling interval change
+    if (changedKeys.includes('pollingInterval')) {
+      this.pollingInterval = newSettings.pollingInterval;
+      
+      // Restart polling with new interval
+      this.stopPolling();
+      this.startPolling();
+      
+      this.log('Polling interval updated to:', this.pollingInterval);
+    }
+    
+    return true;
+  }
+  
   startPolling() {
     this.log('Starting polling with interval:', this.pollingInterval);
     
@@ -57,29 +82,39 @@ class SenseMonitorDevice extends Homey.Device {
   
   async poll() {
     try {
-      const username = this.getSetting('username');
-      const password = this.getSetting('password');
-      const userId = this.getData().userId;
-      
-      if (!username || !password || !userId) {
-        this.error('Missing credentials or user ID');
+      if (!this.senseSession || !this.senseSession.isAuthenticated) {
+        this.error('Session lost. Device is unavailable.');
+        this.setUnavailable('Session expired');
         return;
       }
       
-      // Authenticate and get real-time data
-      const auth = await Senseable.authenticate(username, password);
-      const data = await Senseable.getRealtime(auth, userId);
-      
-      // Update capabilities with latest data
-      if (data && data.data && data.data.w) {
-        await this.setCapabilityValue('measure_power', data.data.w);
+      const monitorId = this.getData().monitorId;
+      if (!monitorId) {
+        this.error('Monitor ID not found in device data');
+        return;
       }
       
-      if (data && data.data && data.data.total_kwh) {
-        await this.setCapabilityValue('meter_power', data.data.total_kwh);
+      // Fetch real-time data for this monitor
+      const realtimeData = await this.senseSession.getRealtimeData(monitorId);
+      
+      if (!realtimeData) {
+        this.error('No real-time data received');
+        this.setUnavailable('No data from Sense API');
+        return;
+      }
+      
+      // Update measure_power (current power in watts)
+      if (realtimeData.watts !== undefined) {
+        await this.setCapabilityValue('measure_power', realtimeData.watts);
+      }
+      
+      // Update meter_power (cumulative energy in kWh)
+      if (realtimeData.total_kwh !== undefined) {
+        await this.setCapabilityValue('meter_power', realtimeData.total_kwh);
       }
       
       this.setAvailable();
+      this.log('Polling successful - Power:', realtimeData.watts, 'W, Energy:', realtimeData.total_kwh, 'kWh');
     } catch (error) {
       this.error('Polling error:', error);
       this.setUnavailable(`Error: ${error.message}`);

@@ -32,8 +32,31 @@
       ],
       "pair": [
         {
+          "id": "login",
+          "template": "login",
+          "title": {
+            "en": "Sense Account Login"
+          }
+        },
+        {
+          "id": "mfa",
+          "template": "text_input",
+          "title": {
+            "en": "Two-Factor Authentication"
+          },
+          "text": {
+            "en": "Enter the 6-digit code from your authenticator app"
+          },
+          "placeholder": {
+            "en": "000000"
+          }
+        },
+        {
           "id": "list_devices",
-          "template": "list_devices"
+          "template": "list_devices",
+          "title": {
+            "en": "Select Sense Monitor"
+          }
         }
       ]
     }
