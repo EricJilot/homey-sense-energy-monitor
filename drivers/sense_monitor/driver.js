@@ -9,12 +9,35 @@ class SenseMonitorDriver extends Homey.Driver {
   }
 
   async onPair(session) {
-    const client = new SenseApiClient();
+    const client = new SenseApiClient(undefined, { logger: this.senseLogger() });
     let mfaToken;
 
-    session.setHandler('login', async ({ username, password }) => {
-      // Resolves to a token only when the account has two-factor enabled.
-      mfaToken = await client.login(username, password);
+    session.setHandler('login', async (credentials) => {
+      const { username, password } = credentials ?? {};
+
+      this.log(
+        'Login payload keys:', Object.keys(credentials ?? {}),
+        '| email length:', (username ?? '').length,
+        '| password length:', (password ?? '').length,
+      );
+
+      if (!username || !password) {
+        throw new Error('Email address and password are both required.');
+      }
+
+      try {
+        // Resolves to a token only when the account has two-factor enabled.
+        mfaToken = await client.login(username.trim(), password);
+      } catch (err) {
+        this.error('Sense rejected the sign-in:', err.status, err.statusText, err.message);
+
+        if (err.status === 401) {
+          throw new Error('Sense rejected that email address or password.');
+        }
+
+        throw err;
+      }
+
       this.log(mfaToken ? 'Credentials accepted, MFA required' : 'Credentials accepted');
       return true;
     });
@@ -46,6 +69,16 @@ class SenseMonitorDriver extends Homey.Driver {
       this.log(`Discovered ${devices.length} monitor(s)`);
       return devices;
     });
+  }
+
+  // The SDK reports Sense's error_reason through its logger, which is otherwise discarded.
+  senseLogger() {
+    return {
+      debug: (message, ...meta) => this.log('[sdk]', message, ...meta),
+      info: (message, ...meta) => this.log('[sdk]', message, ...meta),
+      warn: (message, ...meta) => this.error('[sdk]', message, ...meta),
+      error: (message, ...meta) => this.error('[sdk]', message, ...meta),
+    };
   }
 
   async describeMonitor(client, monitorId, senseSession) {
