@@ -33,7 +33,8 @@ been run, regardless of how likely it is to work.
 - [x] Homey Energy shows flow from both panels and grid
 - [ ] Midnight rollover: all four counters continue upward rather than resetting
       (consumed, imported, exported, produced)
-- [ ] Totals refresh at the configured interval
+- [x] Totals refresh at the configured interval. Observed exactly five minutes
+      apart on both devices at the default setting.
 
 ## Capabilities
 
