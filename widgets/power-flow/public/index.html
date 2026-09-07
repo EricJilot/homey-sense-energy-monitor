@@ -27,6 +27,10 @@
         stroke-linecap: round;
       }
 
+      .pole {
+        stroke-width: 2.8;
+      }
+
       .label {
         fill: currentColor;
         opacity: 0.55;
@@ -102,7 +106,7 @@
       <!-- grid -->
       <circle class="ring" cx="46" cy="60" r="28" />
       <g class="icon" transform="translate(46 60)">
-        <path d="M 0 -12 L 0 12" />
+        <path class="pole" d="M 0 -12 L 0 12" />
         <path d="M -10 -6 L 10 -6" />
         <path d="M -10 -6 L -10 -8.5 M 10 -6 L 10 -8.5" />
         <path d="M -10 -8.5 Q -12.2 -7 -13 -3" />
@@ -170,7 +174,7 @@
         gridFlow.classList.toggle('import', !exporting);
 
         document.getElementById('grid-caption').textContent =
-          exporting ? 'Exporting' : importing ? 'Importing' : '';
+          exporting ? 'To grid' : importing ? 'From grid' : '';
 
         const producing = typeof data.solar === 'number' && data.solar > 5;
         document.getElementById('solar-flow').classList.toggle('idle', !producing);
