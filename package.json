@@ -4,6 +4,7 @@
   "description": "Homey app for the Sense Energy Monitor using the sense-js-sdk",
   "main": "app.js",
   "scripts": {
+    "postinstall": "node scripts/patch-sense-sdk.js",
     "lint": "echo Lint configured via Homey CLI",
     "test": "echo Tests can be added as needed"
   },
