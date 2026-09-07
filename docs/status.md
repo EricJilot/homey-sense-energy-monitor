@@ -70,7 +70,8 @@ documentation rather than observed.
 - [ ] Has been producing for a given duration
 - [ ] Is exporting / self-sufficient / producing conditions
 - [ ] Duration conditions with amount and unit
-- [ ] Refresh energy totals action
+- [x] Refresh energy totals action, fired manually against both devices, each
+      resolving to its own device
 - [ ] The refresh action's device picker lists only this app's devices
       (it has no driver filter, so this may list unrelated devices)
 - [ ] Tokens carry sensible values into a notification
