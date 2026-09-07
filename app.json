@@ -1,7 +1,7 @@
 {
   "id": "com.ericj.senseenergymonitor",
   "version": "0.1.0",
-  "compatibility": ">=10.0.0",
+  "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
     "local"
