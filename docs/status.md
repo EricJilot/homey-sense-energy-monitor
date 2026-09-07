@@ -38,9 +38,9 @@ been run, regardless of how likely it is to work.
 ## Capabilities
 
 - [x] New capabilities are added to already-paired devices on start
-- [ ] Stale capabilities are removed from already-paired devices
-      (the `measure_power.grid` rename should have logged a removal, never
-      confirmed in a log)
+- [x] Stale capabilities are removed from already-paired devices. Confirmed by
+      absence: a later start logged no removal for `measure_power.grid`, which
+      it would have done had the capability still been present.
 
 ## Settings
 
