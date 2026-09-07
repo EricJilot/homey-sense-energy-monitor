@@ -34,6 +34,11 @@
       "name": {
         "en": "Sense Monitor"
       },
+      "images": {
+        "small": "/drivers/sense_monitor/assets/images/small.png",
+        "large": "/drivers/sense_monitor/assets/images/large.png",
+        "xlarge": "/drivers/sense_monitor/assets/images/xlarge.png"
+      },
       "class": "sensor",
       "capabilities": [
         "measure_power",
@@ -140,6 +145,11 @@
       "id": "sense_solar",
       "name": {
         "en": "Sense Solar"
+      },
+      "images": {
+        "small": "/drivers/sense_solar/assets/images/small.png",
+        "large": "/drivers/sense_solar/assets/images/large.png",
+        "xlarge": "/drivers/sense_solar/assets/images/xlarge.png"
       },
       "class": "solarpanel",
       "capabilities": [
