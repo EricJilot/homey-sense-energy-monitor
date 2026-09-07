@@ -104,7 +104,7 @@ documentation rather than observed.
 - [ ] Driver images replaced with recognisable photographs of the device on a
       white background. The current ones are generated placeholder shapes and
       will be rejected under guideline 1.4.
-- [ ] App store images redrawn in the Sense orange `#FF8C00`; they are still
+- [ ] App store images redrawn in the Sense orange `#F9461C`; they are still
       the earlier blue.
 - [ ] Store readme written to the store's constraints: plain text, no Markdown,
       no URLs, one or two paragraphs.
