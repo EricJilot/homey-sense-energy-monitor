@@ -81,6 +81,13 @@ class SenseMonitorDevice extends Homey.Device {
   handleRealtimeUpdate(monitorId, message) {
     if (monitorId !== this.monitorId || message.type !== 'realtime_update') return;
 
+    if (!this.loggedRealtimeShape) {
+      this.loggedRealtimeShape = true;
+      // One-time: the SDK types omit solar fields, so record what Sense really sends.
+      const { devices, deltas, ...rest } = message.payload ?? {};
+      this.log('Realtime payload (devices/deltas omitted):', JSON.stringify(rest));
+    }
+
     const watts = Math.round(message.payload?.w ?? NaN);
 
     // Sense streams roughly once a second; only write real changes.
@@ -121,6 +128,20 @@ class SenseMonitorDevice extends Homey.Device {
     try {
       const trends = await this.client.getMonitorTrends(this.monitorId, this.timezone, 'DAY');
       const today = trends?.consumption?.total;
+
+      if (!this.loggedTrendsShape && trends) {
+        this.loggedTrendsShape = true;
+        // One-time: several solar/grid trend fields are typed as null upstream.
+        this.log('Trends production:', JSON.stringify(trends.production));
+        this.log('Trends solar/grid:', JSON.stringify({
+          net_production: trends.net_production,
+          production_pct: trends.production_pct,
+          solar_powered: trends.solar_powered,
+          solar_to_home: trends.solar_to_home,
+          to_grid: trends.to_grid,
+          from_grid: trends.from_grid,
+        }));
+      }
 
       if (typeof today !== 'number') return;
 
