@@ -1,15 +1,22 @@
 <html>
   <head>
     <style>
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         margin: 0;
         color: var(--homey-text-color, #0d1114);
       }
 
+      /* Fit both dimensions, otherwise scaling to width overflows the fixed
+         widget height and clips the captions. */
       svg {
         display: block;
         width: 100%;
-        height: auto;
+        height: 100%;
       }
 
       .ring {
@@ -102,7 +109,7 @@
   <body class="homey-widget">
     <p id="message" class="homey-text-small" hidden>No Sense devices yet.</p>
 
-    <svg id="diagram" viewBox="0 0 300 170" role="img" aria-label="Power flow">
+    <svg id="diagram" viewBox="0 0 300 154" role="img" aria-label="Power flow">
       <!-- grid -->
       <circle class="ring" cx="46" cy="60" r="28" />
       <g class="icon" transform="translate(46 60)">
