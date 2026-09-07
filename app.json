@@ -19,6 +19,11 @@
   "author": {
     "name": "Eric J"
   },
+  "brandColor": "#0066cc",
+  "images": {
+    "large": "/assets/screenshot_1.svg",
+    "small": "/assets/screenshot_2.svg"
+  },
   "drivers": [
     {
       "id": "sense_monitor",
