@@ -11,7 +11,7 @@
     "en": "Sense Energy Monitor"
   },
   "description": {
-    "en": "Port of the Home Assistant Sense Energy Monitor integration for Homey."
+    "en": "See every watt your home uses and makes"
   },
   "category": [
     "energy"

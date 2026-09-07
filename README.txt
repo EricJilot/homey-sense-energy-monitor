@@ -1,0 +1,3 @@
+Your Sense Energy Monitor already measures every watt moving through your home. This app brings those readings into Homey as they happen, so you can see what the house is drawing from the grid, what your panels are producing, and the moments when the sun is carrying the whole place on its own.
+
+Because the numbers arrive live rather than on a schedule, they can drive automations as well as dashboards. Start the pool pump while you are sending power back to the grid, heat water on a bright afternoon, or simply keep an eye on the day's totals from a dashboard widget that shows power flowing between the grid, your home and your panels.
