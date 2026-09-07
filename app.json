@@ -139,6 +139,38 @@
           "hint": {
             "en": "How often the total energy reading is refreshed. Live power arrives continuously and is not affected by this setting."
           }
+        },
+        {
+          "id": "flowThreshold",
+          "type": "number",
+          "label": {
+            "en": "Flow trigger threshold"
+          },
+          "value": 200,
+          "min": 0,
+          "max": 10000,
+          "units": {
+            "en": "W"
+          },
+          "hint": {
+            "en": "How much surplus is needed before exporting or self-sufficiency Flows trigger. A larger value avoids triggering on brief fluctuations."
+          }
+        },
+        {
+          "id": "flowDwellSeconds",
+          "type": "number",
+          "label": {
+            "en": "Flow trigger delay"
+          },
+          "value": 60,
+          "min": 0,
+          "max": 3600,
+          "units": {
+            "en": "seconds"
+          },
+          "hint": {
+            "en": "How long a change must persist before a Flow triggers. Prevents passing clouds from switching devices on and off repeatedly."
+          }
         }
       ]
     },
@@ -228,8 +260,678 @@
           "hint": {
             "en": "How often the total production reading is refreshed. Live power arrives continuously and is not affected by this setting."
           }
+        },
+        {
+          "id": "flowThreshold",
+          "type": "number",
+          "label": {
+            "en": "Flow trigger threshold"
+          },
+          "value": 50,
+          "min": 0,
+          "max": 10000,
+          "units": {
+            "en": "W"
+          },
+          "hint": {
+            "en": "How much production is needed before the producing Flows trigger. Keeps overnight inverter draw from counting as production."
+          }
+        },
+        {
+          "id": "flowDwellSeconds",
+          "type": "number",
+          "label": {
+            "en": "Flow trigger delay"
+          },
+          "value": 60,
+          "min": 0,
+          "max": 3600,
+          "units": {
+            "en": "seconds"
+          },
+          "hint": {
+            "en": "How long a change must persist before a Flow triggers. Prevents passing clouds from switching devices on and off repeatedly."
+          }
         }
       ]
     }
-  ]
+  ],
+  "flow": {
+    "triggers": [
+      {
+        "id": "export_started",
+        "title": {
+          "en": "Started exporting to the grid"
+        },
+        "hint": {
+          "en": "Triggers when solar production exceeds household demand by more than the configured threshold."
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": -812
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 3200
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 2388
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "export_stopped",
+        "title": {
+          "en": "Stopped exporting to the grid"
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": 430
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 1100
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 1530
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "self_sufficient_started",
+        "title": {
+          "en": "Became self-sufficient"
+        },
+        "hint": {
+          "en": "Triggers when solar production covers everything the home is using."
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": -240
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 2800
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 2560
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "self_sufficient_stopped",
+        "title": {
+          "en": "Stopped being self-sufficient"
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": 640
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 900
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 1540
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "production_started",
+        "title": {
+          "en": "Started producing"
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Producing"
+            },
+            "example": 240
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_solar"
+          }
+        ]
+      },
+      {
+        "id": "production_stopped",
+        "title": {
+          "en": "Stopped producing"
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Producing"
+            },
+            "example": 0
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_solar"
+          }
+        ]
+      },
+      {
+        "id": "exporting_for",
+        "title": {
+          "en": "Has been exporting for"
+        },
+        "titleFormatted": {
+          "en": "Has been exporting for [[amount]] [[unit]]"
+        },
+        "hint": {
+          "en": "Triggers once each time export has continued without interruption for the given time."
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": -812
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 3200
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 2388
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "self_sufficient_for",
+        "title": {
+          "en": "Has been self-sufficient for"
+        },
+        "titleFormatted": {
+          "en": "Has been self-sufficient for [[amount]] [[unit]]"
+        },
+        "tokens": [
+          {
+            "name": "grid",
+            "type": "number",
+            "title": {
+              "en": "Grid"
+            },
+            "example": -240
+          },
+          {
+            "name": "solar",
+            "type": "number",
+            "title": {
+              "en": "Solar"
+            },
+            "example": 2800
+          },
+          {
+            "name": "consumption",
+            "type": "number",
+            "title": {
+              "en": "Home usage"
+            },
+            "example": 2560
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "producing_for",
+        "title": {
+          "en": "Has been producing for"
+        },
+        "titleFormatted": {
+          "en": "Has been producing for [[amount]] [[unit]]"
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Producing"
+            },
+            "example": 2400
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_solar"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "is_exporting",
+        "title": {
+          "en": "Is !{{exporting|not exporting}} to the grid"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "is_self_sufficient",
+        "title": {
+          "en": "Is !{{self-sufficient|not self-sufficient}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          }
+        ]
+      },
+      {
+        "id": "is_producing",
+        "title": {
+          "en": "Is !{{producing|not producing}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_solar"
+          }
+        ]
+      },
+      {
+        "id": "has_been_exporting",
+        "title": {
+          "en": "Has !{{been|not been}} exporting for at least"
+        },
+        "titleFormatted": {
+          "en": "Has !{{been|not been}} exporting for at least [[amount]] [[unit]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "has_been_self_sufficient",
+        "title": {
+          "en": "Has !{{been|not been}} self-sufficient for at least"
+        },
+        "titleFormatted": {
+          "en": "Has !{{been|not been}} self-sufficient for at least [[amount]] [[unit]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_monitor"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "has_been_producing",
+        "title": {
+          "en": "Has !{{been|not been}} producing for at least"
+        },
+        "titleFormatted": {
+          "en": "Has !{{been|not been}} producing for at least [[amount]] [[unit]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=sense_solar"
+          },
+          {
+            "name": "amount",
+            "type": "number",
+            "min": 1,
+            "max": 1440,
+            "step": 1,
+            "placeholder": {
+              "en": "15"
+            }
+          },
+          {
+            "name": "unit",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "seconds",
+                "label": {
+                  "en": "seconds"
+                }
+              },
+              {
+                "id": "minutes",
+                "label": {
+                  "en": "minutes"
+                }
+              },
+              {
+                "id": "hours",
+                "label": {
+                  "en": "hours"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "refresh_totals",
+        "title": {
+          "en": "Refresh energy totals"
+        },
+        "titleFormatted": {
+          "en": "Refresh energy totals on [[device]]"
+        },
+        "hint": {
+          "en": "Fetches the latest totals from Sense immediately, instead of waiting for the next scheduled refresh."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device"
+          }
+        ]
+      }
+    ]
+  }
 }

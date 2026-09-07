@@ -6,7 +6,31 @@ const SenseDevice = require('../../lib/SenseDevice');
 // counts it as generation rather than consumption.
 class SenseSolarDevice extends SenseDevice {
   async onRealtimePower(payload) {
-    await this.setPower('measure_power', payload.solar_w);
+    const watts = payload.solar_w;
+
+    await this.setPower('measure_power', watts);
+
+    const threshold = this.getSetting('flowThreshold') ?? 50;
+    const producing = this.trackState('producing', this.band(watts, threshold), this.dwellMs());
+
+    if (producing !== null) {
+      this.driver.productionTrigger(producing).trigger(this, { power: Math.round(watts) })
+        .catch((err) => this.error('Production trigger failed:', err));
+    }
+  }
+
+  isProducing() {
+    return this.latchState('producing');
+  }
+
+  hasBeenProducing(durationMs) {
+    return this.hasHeld('producing', durationMs);
+  }
+
+  onDurationTick() {
+    this.tickDuration('producing', this.driver.producingForTrigger(), {
+      power: this.lastPower?.measure_power ?? 0,
+    });
   }
 
   async onTrends(trends) {
