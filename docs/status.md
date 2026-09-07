@@ -59,9 +59,9 @@ None of these have been exercised. The card ids, the `(args, state)` run
 listener signature and the device argument filters are all reasoned from the
 documentation rather than observed.
 
-- [ ] Started exporting to the grid
+- [x] Started exporting to the grid, observed firing naturally
 - [ ] Stopped exporting to the grid
-- [ ] Became self-sufficient
+- [x] Became self-sufficient, observed firing naturally
 - [ ] Stopped being self-sufficient
 - [ ] Started producing
 - [ ] Stopped producing
@@ -86,9 +86,7 @@ documentation rather than observed.
 - [x] Fits the widget frame without clipping
 - [ ] Behaviour when no devices are paired
 - [ ] Behaviour on an account without solar, where the solar node has no value
-- [ ] Previews replaced. They are still the generated Homey placeholders and
-      will be rejected under guideline 1.10, which wants simple shapes with no
-      text, in light and dark.
+- [x] Previews replaced with light and dark variants showing the three nodes
 
 ## Packaging
 
@@ -104,14 +102,12 @@ documentation rather than observed.
       None found, so there is no other developer to coordinate with.
 - [x] Description rewritten, icons redrawn on the 960x960 canvas with
       transparent backgrounds, and readme.txt added.
-- [ ] Driver images replaced with recognisable photographs of the device on a
-      white background. The current ones are generated placeholder shapes and
-      will be rejected under guideline 1.4.
-- [ ] App store images redrawn in the Sense orange `#F9461C`; they are still
-      the earlier blue.
-- [ ] Store readme written to the store's constraints: plain text, no Markdown,
-      no URLs, one or two paragraphs.
-- [ ] Confirm the app name and description satisfy guidelines 1.1 and 1.2.
+- [x] Driver images replaced with product photography on white, distinguished by
+      clamp count since both drivers describe the same hardware
+- [x] App store images replaced with photography
+- [x] Store readme written as plain text, no Markdown, no URLs
+- [x] App name is three words and the brand's own, and the description no longer
+      names another platform, satisfying guidelines 1.1 and 1.2
 
 ## Candidate work
 
