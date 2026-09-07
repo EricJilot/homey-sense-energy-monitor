@@ -36,7 +36,12 @@ class SenseMonitorDevice extends SenseDevice {
     const surplus = typeof payload.solar_w === 'number' && typeof payload.w === 'number'
       ? payload.solar_w - payload.w
       : null;
-    const sufficient = this.trackState('selfSufficient', this.band(surplus, threshold), dwell);
+
+    // Surplus is the same quantity as negated grid, so without distinct levels
+    // this would be identical to exporting. Self-sufficiency is the broader
+    // state: it begins the moment solar covers demand, and ends only once the
+    // house is drawing meaningfully from the grid again.
+    const sufficient = this.trackState('selfSufficient', this.band(surplus, 0, -threshold), dwell);
     if (sufficient !== null) {
       this.log(sufficient ? 'Became self-sufficient' : 'Stopped being self-sufficient', tokens);
       this.driver.selfSufficientTrigger(sufficient).trigger(this, tokens)

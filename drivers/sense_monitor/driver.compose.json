@@ -120,7 +120,7 @@
         "en": "W"
       },
       "hint": {
-        "en": "How much surplus is needed before exporting or self-sufficiency Flows trigger. A larger value avoids triggering on brief fluctuations."
+        "en": "How much surplus is needed before the exporting Flows trigger. Self-sufficiency starts as soon as solar covers the house, and stops once this much is being drawn from the grid."
       }
     },
     {
