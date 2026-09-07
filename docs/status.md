@@ -25,7 +25,9 @@ been run, regardless of how likely it is to work.
 - [x] Consumption equals grid plus solar
 - [x] Grid reads negative while exporting
 - [x] Figures roughly match the Sense web app
-- [ ] Websocket recovers after a network interruption
+- [x] Websocket recovers after an interruption. Sense cycles the connection
+      roughly every sixteen minutes and the SDK reconnects in about 250ms
+      without intervention, so this happens continuously in normal use.
 
 ## Energy totals
 
