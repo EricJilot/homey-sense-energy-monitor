@@ -17,7 +17,11 @@
   ],
   "permissions": [],
   "author": {
-    "name": "Eric J"
+    "name": "Eric Jilot"
+  },
+  "source": "https://github.com/EricJilot/homey-sense-energy-monitor",
+  "bugs": {
+    "url": "https://github.com/EricJilot/homey-sense-energy-monitor/issues"
   },
   "brandColor": "#FF8C00",
   "images": {
