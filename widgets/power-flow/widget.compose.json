@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Power Flow"
+  },
+  "height": 200,
+  "settings": [],
+  "api": {
+    "getFlow": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

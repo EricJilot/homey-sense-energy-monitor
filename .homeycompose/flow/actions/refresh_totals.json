@@ -1,0 +1,18 @@
+{
+  "id": "refresh_totals",
+  "title": {
+    "en": "Refresh energy totals"
+  },
+  "titleFormatted": {
+    "en": "Refresh energy totals on [[device]]"
+  },
+  "hint": {
+    "en": "Fetches the latest totals from Sense immediately, instead of waiting for the next scheduled refresh."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device"
+    }
+  ]
+}

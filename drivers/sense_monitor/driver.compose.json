@@ -1,0 +1,143 @@
+{
+  "name": {
+    "en": "Sense Monitor"
+  },
+  "images": {
+    "small": "/drivers/sense_monitor/assets/images/small.png",
+    "large": "/drivers/sense_monitor/assets/images/large.png",
+    "xlarge": "/drivers/sense_monitor/assets/images/xlarge.png"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "measure_power",
+    "measure_power.consumption",
+    "meter_power",
+    "meter_power.imported",
+    "meter_power.exported"
+  ],
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": {
+        "en": "Grid"
+      }
+    },
+    "measure_power.consumption": {
+      "title": {
+        "en": "Home usage"
+      }
+    },
+    "meter_power": {
+      "title": {
+        "en": "Total used"
+      }
+    },
+    "meter_power.imported": {
+      "title": {
+        "en": "Imported"
+      }
+    },
+    "meter_power.exported": {
+      "title": {
+        "en": "Exported"
+      }
+    }
+  },
+  "energy": {
+    "cumulative": true,
+    "cumulativeImportedCapability": "meter_power.imported",
+    "cumulativeExportedCapability": "meter_power.exported"
+  },
+  "pair": [
+    {
+      "id": "login",
+      "template": "login_credentials",
+      "options": {
+        "logo": "icon.svg",
+        "usernameLabel": {
+          "en": "Email address"
+        },
+        "usernamePlaceholder": {
+          "en": "you@example.com"
+        },
+        "passwordLabel": {
+          "en": "Password"
+        }
+      }
+    },
+    {
+      "id": "mfa",
+      "template": "pincode",
+      "options": {
+        "type": "number",
+        "length": 6,
+        "title": {
+          "en": "Two-factor authentication"
+        },
+        "hint": {
+          "en": "Enter the 6-digit code from your authenticator app."
+        }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "settings": [
+    {
+      "id": "energyRefreshMinutes",
+      "type": "number",
+      "label": {
+        "en": "Energy refresh interval"
+      },
+      "value": 5,
+      "min": 1,
+      "max": 60,
+      "units": {
+        "en": "minutes"
+      },
+      "hint": {
+        "en": "How often the total energy reading is refreshed. Live power arrives continuously and is not affected by this setting."
+      }
+    },
+    {
+      "id": "flowThreshold",
+      "type": "number",
+      "label": {
+        "en": "Flow trigger threshold"
+      },
+      "value": 200,
+      "min": 0,
+      "max": 10000,
+      "units": {
+        "en": "W"
+      },
+      "hint": {
+        "en": "How much surplus is needed before exporting or self-sufficiency Flows trigger. A larger value avoids triggering on brief fluctuations."
+      }
+    },
+    {
+      "id": "flowDwellSeconds",
+      "type": "number",
+      "label": {
+        "en": "Flow trigger delay"
+      },
+      "value": 60,
+      "min": 0,
+      "max": 3600,
+      "units": {
+        "en": "seconds"
+      },
+      "hint": {
+        "en": "How long a change must persist before a Flow triggers. Prevents passing clouds from switching devices on and off repeatedly."
+      }
+    }
+  ]
+}

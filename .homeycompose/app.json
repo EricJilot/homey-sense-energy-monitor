@@ -1,0 +1,32 @@
+{
+  "id": "com.ericj.senseenergymonitor",
+  "version": "0.1.0",
+  "compatibility": ">=12.3.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Sense Energy Monitor"
+  },
+  "description": {
+    "en": "Port of the Home Assistant Sense Energy Monitor integration for Homey."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "author": {
+    "name": "Eric Jilot"
+  },
+  "source": "https://github.com/EricJilot/homey-sense-energy-monitor",
+  "bugs": {
+    "url": "https://github.com/EricJilot/homey-sense-energy-monitor/issues"
+  },
+  "brandColor": "#FF8C00",
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png",
+    "xlarge": "/assets/images/xlarge.png"
+  }
+}

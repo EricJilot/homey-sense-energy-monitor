@@ -1,0 +1,120 @@
+{
+  "name": {
+    "en": "Sense Solar"
+  },
+  "images": {
+    "small": "/drivers/sense_solar/assets/images/small.png",
+    "large": "/drivers/sense_solar/assets/images/large.png",
+    "xlarge": "/drivers/sense_solar/assets/images/xlarge.png"
+  },
+  "class": "solarpanel",
+  "capabilities": [
+    "measure_power",
+    "meter_power"
+  ],
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": {
+        "en": "Producing"
+      }
+    },
+    "meter_power": {
+      "title": {
+        "en": "Total produced"
+      }
+    }
+  },
+  "pair": [
+    {
+      "id": "login",
+      "template": "login_credentials",
+      "options": {
+        "logo": "icon.svg",
+        "usernameLabel": {
+          "en": "Email address"
+        },
+        "usernamePlaceholder": {
+          "en": "you@example.com"
+        },
+        "passwordLabel": {
+          "en": "Password"
+        }
+      }
+    },
+    {
+      "id": "mfa",
+      "template": "pincode",
+      "options": {
+        "type": "number",
+        "length": 6,
+        "title": {
+          "en": "Two-factor authentication"
+        },
+        "hint": {
+          "en": "Enter the 6-digit code from your authenticator app."
+        }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "settings": [
+    {
+      "id": "energyRefreshMinutes",
+      "type": "number",
+      "label": {
+        "en": "Energy refresh interval"
+      },
+      "value": 5,
+      "min": 1,
+      "max": 60,
+      "units": {
+        "en": "minutes"
+      },
+      "hint": {
+        "en": "How often the total production reading is refreshed. Live power arrives continuously and is not affected by this setting."
+      }
+    },
+    {
+      "id": "flowThreshold",
+      "type": "number",
+      "label": {
+        "en": "Flow trigger threshold"
+      },
+      "value": 50,
+      "min": 0,
+      "max": 10000,
+      "units": {
+        "en": "W"
+      },
+      "hint": {
+        "en": "How much production is needed before the producing Flows trigger. Keeps overnight inverter draw from counting as production."
+      }
+    },
+    {
+      "id": "flowDwellSeconds",
+      "type": "number",
+      "label": {
+        "en": "Flow trigger delay"
+      },
+      "value": 60,
+      "min": 0,
+      "max": 3600,
+      "units": {
+        "en": "seconds"
+      },
+      "hint": {
+        "en": "How long a change must persist before a Flow triggers. Prevents passing clouds from switching devices on and off repeatedly."
+      }
+    }
+  ]
+}

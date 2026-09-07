@@ -1,0 +1,147 @@
+{
+  "triggers": [
+    {
+      "id": "production_started",
+      "title": {
+        "en": "Started producing"
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Producing"
+          },
+          "example": 240
+        }
+      ],
+      "args": []
+    },
+    {
+      "id": "production_stopped",
+      "title": {
+        "en": "Stopped producing"
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Producing"
+          },
+          "example": 0
+        }
+      ],
+      "args": []
+    },
+    {
+      "id": "producing_for",
+      "title": {
+        "en": "Has been producing for"
+      },
+      "titleFormatted": {
+        "en": "Has been producing for [[amount]] [[unit]]"
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Producing"
+          },
+          "example": 2400
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "number",
+          "min": 1,
+          "max": 1440,
+          "step": 1,
+          "placeholder": {
+            "en": "15"
+          }
+        },
+        {
+          "name": "unit",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "seconds",
+              "label": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "minutes",
+              "label": {
+                "en": "minutes"
+              }
+            },
+            {
+              "id": "hours",
+              "label": {
+                "en": "hours"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "is_producing",
+      "title": {
+        "en": "Is !{{producing|not producing}}"
+      },
+      "args": []
+    },
+    {
+      "id": "has_been_producing",
+      "title": {
+        "en": "Has !{{been|not been}} producing for at least"
+      },
+      "titleFormatted": {
+        "en": "Has !{{been|not been}} producing for at least [[amount]] [[unit]]"
+      },
+      "args": [
+        {
+          "name": "amount",
+          "type": "number",
+          "min": 1,
+          "max": 1440,
+          "step": 1,
+          "placeholder": {
+            "en": "15"
+          }
+        },
+        {
+          "name": "unit",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "seconds",
+              "label": {
+                "en": "seconds"
+              }
+            },
+            {
+              "id": "minutes",
+              "label": {
+                "en": "minutes"
+              }
+            },
+            {
+              "id": "hours",
+              "label": {
+                "en": "hours"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
