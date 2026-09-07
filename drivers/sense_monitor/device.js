@@ -2,12 +2,20 @@
 
 const SenseDevice = require('../../lib/SenseDevice');
 
-// Whole-home consumption and grid exchange. `w` is gross household usage, so
-// with solar running it exceeds `grid_w` by whatever the panels are supplying.
+// Homey treats this as the home's cumulative meter and derives consumption as
+// grid + solar, so measure_power must be grid exchange rather than the gross
+// household usage in `w`, which is exposed separately for reference.
 class SenseMonitorDevice extends SenseDevice {
   async onRealtimePower(payload) {
-    await this.setPower('measure_power', payload.w);
-    await this.setPower('measure_power.grid', payload.grid_w);
+    await this.setPower('measure_power', this.gridWatts(payload));
+    await this.setPower('measure_power.consumption', payload.w);
+  }
+
+  // Derived rather than read from grid_w, because a negative export value has
+  // not been observed yet and this subtraction is signed correctly by design.
+  gridWatts({ w, solar_w: solar, grid_w: grid }) {
+    if (typeof w === 'number' && typeof solar === 'number') return w - solar;
+    return grid;
   }
 
   async onTrends(trends) {
