@@ -97,6 +97,10 @@ documentation rather than observed.
 
 ## Before submitting to the app store
 
+- [x] Checked the store for an existing Sense app, as guideline 2.1.1 requires.
+      None found, so there is no other developer to coordinate with.
+- [x] Description rewritten, icons redrawn on the 960x960 canvas with
+      transparent backgrounds, and readme.txt added.
 - [ ] Driver images replaced with recognisable photographs of the device on a
       white background. The current ones are generated placeholder shapes and
       will be rejected under guideline 1.4.
