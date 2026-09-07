@@ -108,10 +108,17 @@ documentation rather than observed.
 
 ## Candidate work
 
-**Per-appliance breakdown.** Sense's device disaggregation is unused. Every
-realtime message carries a `devices` array that the app discards, and
-`getMonitorDevices()` returns the detected appliances. Open question is whether
-each appliance becomes its own Homey device or a capability on an existing one.
+**Per-appliance breakdown. Decided against, 2026-09-07.** Sense exposes
+detected appliances through `getMonitorDevices()` and the `devices` array in
+each realtime message, which the app discards. Surfacing them was considered
+and rejected: the whole-home and solar figures come from current clamps and are
+measurements, whereas per-appliance values are inferred from load signatures.
+Homey also offers no way to attach that data to an existing device, since apps
+cannot write capabilities onto devices they do not own, so each appliance would
+arrive as a duplicate alongside its real counterpart and would need excluding
+from Energy on one side or the other to avoid being subtracted twice from the
+cumulative meter. Real per-device measurement is the better source. Revisit only
+if Sense's attribution improves markedly.
 
 **Per-Flow power thresholds.** The export and self-sufficiency cards share one
 `flowThreshold` device setting, so every Flow on a device reacts at the same
