@@ -19,7 +19,14 @@ class SenseMonitorDevice extends Homey.Device {
       return;
     }
 
-    this.client = new SenseApiClient(storedSession);
+    this.client = new SenseApiClient(storedSession, {
+      logger: {
+        debug: (message, ...meta) => this.log('[sdk]', message, ...meta),
+        info: (message, ...meta) => this.log('[sdk]', message, ...meta),
+        warn: (message, ...meta) => this.error('[sdk]', message, ...meta),
+        error: (message, ...meta) => this.error('[sdk]', message, ...meta),
+      },
+    });
 
     this.handleSessionChanged = this.handleSessionChanged.bind(this);
     this.handleRealtimeUpdate = this.handleRealtimeUpdate.bind(this);

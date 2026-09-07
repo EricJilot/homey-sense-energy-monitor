@@ -15,12 +15,6 @@ class SenseMonitorDriver extends Homey.Driver {
     session.setHandler('login', async (credentials) => {
       const { username, password } = credentials ?? {};
 
-      this.log(
-        'Login payload keys:', Object.keys(credentials ?? {}),
-        '| email length:', (username ?? '').length,
-        '| password length:', (password ?? '').length,
-      );
-
       if (!username || !password) {
         throw new Error('Email address and password are both required.');
       }
@@ -29,8 +23,6 @@ class SenseMonitorDriver extends Homey.Driver {
         // Resolves to a token only when the account has two-factor enabled.
         mfaToken = await client.login(username.trim(), password);
       } catch (err) {
-        this.error('Sense rejected the sign-in:', err.status, err.statusText, err.message);
-
         if (err.status === 401) {
           throw new Error('Sense rejected that email address or password.');
         }
