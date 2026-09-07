@@ -108,6 +108,12 @@ realtime message carries a `devices` array that the app discards, and
 `getMonitorDevices()` returns the detected appliances. Open question is whether
 each appliance becomes its own Homey device or a capability on an existing one.
 
+**Per-Flow power thresholds.** The export and self-sufficiency cards share one
+`flowThreshold` device setting, so every Flow on a device reacts at the same
+level. An amount argument on the cards, following the duration argument
+pattern, would allow "export above 200 W runs the pump" and "above 2000 W runs
+the water heater" side by side.
+
 **A "has not been producing for" trigger.** The natural way to detect nightfall
 or a panel fault. The condition exists, but only helps if something else
 triggers the Flow.
