@@ -16,3 +16,7 @@ __pycache__/
 Thumbs.db
 .vscode/
 .vs/
+
+
+# Added by Homey CLI
+/.homeybuild/
