@@ -21,8 +21,8 @@
   },
   "brandColor": "#0066cc",
   "images": {
-    "large": "/assets/screenshot_1.svg",
-    "small": "/assets/screenshot_2.svg"
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
   },
   "drivers": [
     {
