@@ -12,6 +12,7 @@ been run, regardless of how likely it is to work.
 - [x] Monitor discovery lists the account's monitor
 - [x] Solar driver offers only monitors with solar connected
 - [x] Session survives an app restart without re-pairing
+- [x] Session survives a hub reboot, with devices reconnecting on their own
 - [ ] Account with two or more monitors lists all of them
 - [ ] Account without solar: solar driver offers nothing
 - [ ] Expired or revoked session shows the re-pair message
@@ -31,6 +32,7 @@ been run, regardless of how likely it is to work.
 - [x] Imported increases over time
 - [x] Exported increases while exporting
 - [x] Homey Energy shows flow from both panels and grid
+- [x] Accumulated totals survive a hub reboot rather than restarting from zero
 - [ ] Midnight rollover: all four counters continue upward rather than resetting
       (consumed, imported, exported, produced)
 - [x] Totals refresh at the configured interval. Observed exactly five minutes
@@ -88,7 +90,10 @@ documentation rather than observed.
 ## Packaging
 
 - [x] Validates at publish level
-- [ ] Installs from a built package rather than `homey app run --remote`
+- [x] A `--remote` install persists after the CLI exits and across a hub reboot,
+      so it is a real install rather than a session tied to the terminal
+- [ ] Published to Test, which would confirm whether the diagnostics report
+      button appears only for store-installed apps
 
 ## Before submitting to the app store
 
