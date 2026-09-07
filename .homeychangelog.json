@@ -1,0 +1,5 @@
+{
+  "1.0.0": {
+    "en": "First release. Shows live grid, household and solar power, tracks energy imported, exported and produced, and adds Flow cards for exporting to the grid, covering your own demand and solar production. Includes a dashboard widget showing power flowing between the grid, your home and your panels."
+  }
+}
