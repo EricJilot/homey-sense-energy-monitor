@@ -72,6 +72,18 @@ documentation rather than observed.
 - [ ] Deadband and dwell prevent flapping around the threshold in practice
 - [ ] Restarting the app does not fire triggers for an already-true state
 
+## Widget
+
+- [x] Appears in the widget picker and renders on a dashboard
+- [x] Grid, home and solar values shown, and readable at widget size
+- [x] Flow animation direction matches the actual power direction
+- [x] Fits the widget frame without clipping
+- [ ] Behaviour when no devices are paired
+- [ ] Behaviour on an account without solar, where the solar node has no value
+- [ ] Previews replaced. They are still the generated Homey placeholders and
+      will be rejected under guideline 1.10, which wants simple shapes with no
+      text, in light and dark.
+
 ## Packaging
 
 - [x] Validates at publish level
