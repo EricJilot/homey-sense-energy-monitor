@@ -38,29 +38,61 @@
       "pair": [
         {
           "id": "login",
-          "template": "login",
-          "title": {
-            "en": "Sense Account Login"
+          "template": "login_credentials",
+          "options": {
+            "logo": "icon.svg",
+            "usernameLabel": {
+              "en": "Email address"
+            },
+            "usernamePlaceholder": {
+              "en": "you@example.com"
+            },
+            "passwordLabel": {
+              "en": "Password"
+            }
           }
         },
         {
           "id": "mfa",
-          "template": "text_input",
-          "title": {
-            "en": "Two-Factor Authentication"
-          },
-          "text": {
-            "en": "Enter the 6-digit code from your authenticator app"
-          },
-          "placeholder": {
-            "en": "000000"
+          "template": "pincode",
+          "options": {
+            "type": "number",
+            "length": 6,
+            "title": {
+              "en": "Two-factor authentication"
+            },
+            "hint": {
+              "en": "Enter the 6-digit code from your authenticator app."
+            }
           }
         },
         {
           "id": "list_devices",
           "template": "list_devices",
-          "title": {
-            "en": "Select Sense Monitor"
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "id": "energyRefreshMinutes",
+          "type": "number",
+          "label": {
+            "en": "Energy refresh interval"
+          },
+          "value": 5,
+          "min": 1,
+          "max": 60,
+          "units": {
+            "en": "minutes"
+          },
+          "hint": {
+            "en": "How often the total energy reading is refreshed. Live power arrives continuously and is not affected by this setting."
           }
         }
       ]

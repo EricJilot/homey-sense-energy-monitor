@@ -9,118 +9,63 @@ class SenseMonitorDriver extends Homey.Driver {
   }
 
   async onPair(session) {
-    let senseClient = new SenseApiClient();
-    let mfaResponse = null;
-    let authenticatedSession = null;
+    const client = new SenseApiClient();
+    let mfaToken;
 
-    // Handle login step
-    session.setHandler('login', async (credentials) => {
-      this.log('Attempting Sense authentication...');
-      
-      try {
-        // Attempt authentication
-        const result = await senseClient.authenticate(
-          credentials.username,
-          credentials.password
-        );
-
-        // Check if MFA is required
-        if (result && result.status === 'mfa_required') {
-          this.log('MFA required, waiting for OTP...');
-          mfaResponse = result;
-          
-          // Proceed to MFA step
-          return true;
-        }
-
-        // Authentication successful without MFA
-        this.log('Authentication successful');
-        authenticatedSession = senseClient;
-        
-        // Skip MFA step and go directly to device list
-        return true;
-      } catch (error) {
-        this.error('Authentication error:', error);
-        throw new Error(`Authentication failed: ${error.message}`);
-      }
+    session.setHandler('login', async ({ username, password }) => {
+      // Resolves to a token only when the account has two-factor enabled.
+      mfaToken = await client.login(username, password);
+      this.log(mfaToken ? 'Credentials accepted, MFA required' : 'Credentials accepted');
+      return true;
     });
 
-    // Handle MFA step (only shown if MFA is required)
-    session.setHandler('mfa', async (otp) => {
-      if (!mfaResponse || !mfaResponse.mfa_token) {
-        throw new Error('MFA token not available');
-      }
-
-      this.log('Completing MFA authentication...');
-      
-      try {
-        // Complete MFA login
-        await senseClient.completeMfaLogin(
-          mfaResponse.mfa_token,
-          otp,
-          new Date()
-        );
-
-        this.log('MFA authentication successful');
-        authenticatedSession = senseClient;
-        return true;
-      } catch (error) {
-        this.error('MFA error:', error);
-        throw new Error(`MFA verification failed: ${error.message}`);
-      }
-    });
-
-    // Handle device list step
-    session.setHandler('list_devices', async () => {
-      if (!authenticatedSession || !authenticatedSession.isAuthenticated) {
-        throw new Error('Not authenticated. Please retry login.');
-      }
-
-      this.log('Fetching Sense monitors...');
-
-      try {
-        // Get monitor information
-        const monitorInfo = await authenticatedSession.getMonitorInfo();
-
-        if (!monitorInfo || !monitorInfo.monitors || monitorInfo.monitors.length === 0) {
-          throw new Error('No Sense monitors found on this account');
-        }
-
-        // Map monitors to Homey device format
-        const devices = monitorInfo.monitors.map((monitor) => ({
-          name: monitor.name || 'Sense Monitor',
-          data: {
-            id: monitor.id,
-            monitorId: monitor.id
-          },
-          settings: {
-            pollingInterval: 30000 // 30 seconds default
-          }
-        }));
-
-        this.log(`Found ${devices.length} monitor(s)`);
-        return devices;
-      } catch (error) {
-        this.error('Device discovery error:', error);
-        throw new Error(`Failed to fetch monitors: ${error.message}`);
-      }
-    });
-
-    // Store authenticated session and credentials for device use
     session.setHandler('showView', async (viewId) => {
-      if (viewId === 'add_devices') {
-        // Store the authenticated session in the app context
-        if (authenticatedSession && authenticatedSession.isAuthenticated) {
-          this.homey.app.senseSession = authenticatedSession;
-        }
+      if (viewId === 'mfa' && !mfaToken) {
+        await session.showView('list_devices');
       }
+    });
+
+    session.setHandler('pincode', async (code) => {
+      const otp = Array.isArray(code) ? code.join('') : String(code).trim();
+      await client.completeMfaLogin(mfaToken, otp, new Date());
+      this.log('MFA accepted');
+      return true;
+    });
+
+    session.setHandler('list_devices', async () => {
+      const senseSession = client.session;
+
+      if (!senseSession) {
+        throw new Error('Not signed in to Sense. Please start over.');
+      }
+
+      const devices = await Promise.all(
+        senseSession.monitorIds.map((monitorId) => this.describeMonitor(client, monitorId, senseSession))
+      );
+
+      this.log(`Discovered ${devices.length} monitor(s)`);
+      return devices;
     });
   }
 
-  async onPairListDevices(session) {
-    // This is called after successful pairing
-    this.log('Device pairing completed');
-    return [];
+  async describeMonitor(client, monitorId, senseSession) {
+    let serialNumber;
+    let timezone = 'UTC';
+
+    try {
+      const { monitor } = (await client.getMonitorOverview(monitorId)).monitor_overview;
+      serialNumber = monitor.serial_number;
+      timezone = monitor.time_zone || timezone;
+    } catch (err) {
+      // Non-fatal: the monitor can still be paired without its overview.
+      this.error(`Could not load overview for monitor ${monitorId}:`, err);
+    }
+
+    return {
+      name: serialNumber ? `Sense Monitor ${serialNumber}` : `Sense Monitor ${monitorId}`,
+      data: { id: String(monitorId) },
+      store: { monitorId, timezone, session: senseSession },
+    };
   }
 }
 
