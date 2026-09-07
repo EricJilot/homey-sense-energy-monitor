@@ -127,14 +127,14 @@ from Energy on one side or the other to avoid being subtracted twice from the
 cumulative meter. Real per-device measurement is the better source. Revisit only
 if Sense's attribution improves markedly.
 
-**Throttling measure_power.** The capability is written whenever the rounded
-watt value changes, which on a live house is roughly once a second per device,
-or around 170,000 writes a day. Every write lands in Insights, and it makes
-Homey's built-in power changed trigger unusable: adding it to a Flow floods the
-timeline. Writing immediately on a meaningful change, say 25W, and otherwise at
-most once every few seconds would keep the app responsive while giving Insights
-sensible granularity. Costs second-by-second history that is unlikely to be
-wanted.
+**Throttling measure_power. Tried and reverted, 2026-09-07.** The capability is
+written whenever the rounded watt value changes, roughly once a second per
+device on a live house. A rate limit was added and then removed: full fidelity
+data was preferred. The trade is understood rather than overlooked. Every write
+lands in Insights, which downsamples anyway, and any Flow with a capability
+condition on power re-evaluates on each write. Against that, meters reporting at
+one hertz are normal on Homey and it handles them. Revisit only if a real
+performance problem appears.
 
 **Per-Flow power thresholds.** The export and self-sufficiency cards share one
 `flowThreshold` device setting, so every Flow on a device reacts at the same
