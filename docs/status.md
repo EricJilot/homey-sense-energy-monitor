@@ -72,8 +72,8 @@ documentation rather than observed.
 - [ ] Duration conditions with amount and unit
 - [x] Refresh energy totals action, fired manually against both devices, each
       resolving to its own device
-- [ ] The refresh action's device picker lists only this app's devices
-      (it has no driver filter, so this may list unrelated devices)
+- [x] The refresh action's device picker lists only this app's devices, despite
+      having no driver filter, so Homey scopes device arguments to the owning app
 - [ ] Tokens carry sensible values into a notification
 - [ ] Deadband and dwell prevent flapping around the threshold in practice
 - [ ] Restarting the app does not fire triggers for an already-true state
@@ -126,6 +126,15 @@ arrive as a duplicate alongside its real counterpart and would need excluding
 from Energy on one side or the other to avoid being subtracted twice from the
 cumulative meter. Real per-device measurement is the better source. Revisit only
 if Sense's attribution improves markedly.
+
+**Throttling measure_power.** The capability is written whenever the rounded
+watt value changes, which on a live house is roughly once a second per device,
+or around 170,000 writes a day. Every write lands in Insights, and it makes
+Homey's built-in power changed trigger unusable: adding it to a Flow floods the
+timeline. Writing immediately on a meaningful change, say 25W, and otherwise at
+most once every few seconds would keep the app responsive while giving Insights
+sensible granularity. Costs second-by-second history that is unlikely to be
+wanted.
 
 **Per-Flow power thresholds.** The export and self-sufficiency cards share one
 `flowThreshold` device setting, so every Flow on a device reacts at the same
