@@ -255,6 +255,21 @@
         poll();
         setInterval(poll, 2000);
       }
+
+      // Dev preview: opening the file directly in a browser (where Homey never
+      // calls onHomeyReady) renders mock values from the query string, e.g.
+      // index.html?grid=-2400&solar=3200&consumption=800
+      if (location.protocol === 'file:') {
+        const query = new URLSearchParams(location.search);
+        const num = (key) => (query.has(key) ? Number(query.get(key)) : null);
+
+        render({
+          paired: true,
+          grid: num('grid') ?? 1800,
+          consumption: num('consumption') ?? 3000,
+          solar: num('solar') ?? 1200,
+        });
+      }
     </script>
   </body>
 </html>
