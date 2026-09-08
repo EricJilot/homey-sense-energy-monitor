@@ -55,10 +55,6 @@ been run, regardless of how likely it is to work.
 
 ## Flow cards
 
-None of these have been exercised. The card ids, the `(args, state)` run
-listener signature and the device argument filters are all reasoned from the
-documentation rather than observed.
-
 - [x] Started exporting to the grid, observed firing naturally
 - [ ] Stopped exporting to the grid
 - [x] Became self-sufficient, observed firing naturally
