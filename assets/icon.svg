@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
    <g fill="none" stroke="#000000" stroke-width="44" stroke-linejoin="round" stroke-linecap="round" clip-rule="evenodd" fill-rule="evenodd">
-    <path d="M 780.79638 667.22982 V 327.90446 L 477.91525 133.86355 175.03412 327.90446 V 667.22982 H 278.45694 V 804.63443 L 477.91525 667.22982 Z" />
+    <path d="M 855.21199 728.64262
+V 312.94911
+L 484.1648 75.237592
+  113.11762 312.94911
+V 728.64262
+H 239.81664
+V 896.97135
+L 484.1648 728.64262
+Z" />
   </g>
 </svg>
