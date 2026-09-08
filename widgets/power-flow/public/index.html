@@ -1,6 +1,19 @@
 <html>
   <head>
     <style>
+      :root {
+        --accent: #e8410f;   /* import / consumption */
+        --export: #0f8a4c;
+        --idle: #9a999390;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --accent: #f9461c;
+          --export: #2fa65a;
+        }
+      }
+
       html,
       body {
         height: 100%;
@@ -19,79 +32,80 @@
         height: 100%;
       }
 
-      .ring {
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.5;
-        opacity: 0.18;
-      }
-
       .icon {
         fill: none;
         stroke: currentColor;
-        stroke-width: 1.6;
+        stroke-width: 2;
         stroke-linejoin: round;
         stroke-linecap: round;
       }
 
-      .pole {
-        stroke-width: 2.8;
+      .icon.filled {
+        fill: currentColor;
+        stroke: none;
       }
 
-      .label {
-        fill: currentColor;
+      .node.accent {
+        color: var(--accent);
+      }
+
+      .node.export {
+        color: var(--export);
+      }
+
+      .node.idle {
+        color: var(--idle);
+      }
+
+      .name {
+        fill: var(--homey-text-color, #0d1114);
         opacity: 0.55;
         font-size: 10px;
         text-anchor: middle;
       }
 
       .value {
-        fill: currentColor;
-        font-size: 14px;
-        font-weight: 600;
+        fill: var(--homey-text-color, #0d1114);
+        font-size: 15px;
+        font-weight: 700;
         text-anchor: middle;
       }
 
-      .line {
-        stroke: currentColor;
-        stroke-width: 2.5;
-        stroke-linecap: round;
-        opacity: 0.12;
+      .value .unit {
+        font-size: 10px;
+        font-weight: 400;
+        opacity: 0.6;
       }
 
-      /* Dash length plus gap is 12, so a -12 offset loops seamlessly. */
-      .flow {
-        stroke-width: 2.5;
-        stroke-linecap: round;
-        stroke-dasharray: 5 7;
-        animation: march 1.1s linear infinite;
+      /* Chevrons march along the diagonal inside a group the SVG attribute has
+         already translated and rotated, so a plain translateX moves them along
+         the path. One chevron spacing per loop reads as continuous flow. */
+      .chevrons {
+        fill: var(--accent);
+        animation: march 0.9s linear infinite;
       }
 
-      .flow.reverse {
+      .flow.export .chevrons {
+        fill: var(--export);
         animation-direction: reverse;
       }
 
+      /* Flip each chevron around its own centre so reversed motion also points
+         the arrows the other way. */
+      .flow.export .chevrons path {
+        transform: scaleX(-1);
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
       .flow.idle {
-        animation: none;
-        opacity: 0;
+        display: none;
       }
 
       @keyframes march {
         to {
-          stroke-dashoffset: -12;
+          transform: translateX(17px);
         }
-      }
-
-      .import {
-        stroke: #f9461c;
-      }
-
-      .export {
-        stroke: #3baa57;
-      }
-
-      .solar {
-        stroke: #ffc02e;
       }
 
       #message {
@@ -109,55 +123,93 @@
   <body class="homey-widget">
     <p id="message" class="homey-text-small" hidden>No Sense devices yet.</p>
 
-    <svg id="diagram" viewBox="0 0 300 154" role="img" aria-label="Power flow">
-      <!-- grid -->
-      <circle class="ring" cx="46" cy="60" r="28" />
-      <g class="icon" transform="translate(46 60)">
-        <path class="pole" d="M 0 -12 L 0 12" />
-        <path d="M -10 -6 L 10 -6" />
-        <path d="M -10 -6 L -10 -8.5 M 10 -6 L 10 -8.5" />
-        <path d="M -10 -8.5 Q -12.2 -7 -13 -3" />
-        <path d="M 10 -8.5 Q 12.2 -7 13 -3" />
+    <svg id="diagram" viewBox="0 0 300 178" role="img" aria-label="Power flow">
+      <!-- home, top point of the triangle -->
+      <g id="home-node" class="node accent">
+        <g class="icon filled" transform="translate(150 34)">
+          <path d="M 0 -15 L 15.5 -4.5 L 15.5 13 L 4.5 13 L 4.5 2.5 L -4.5 2.5 L -4.5 13 L -15.5 13 L -15.5 -4.5 Z" />
+        </g>
       </g>
-      <text class="label" x="46" y="112">Grid</text>
-      <text class="value" x="46" y="130" id="grid-value">—</text>
-      <text class="label" x="46" y="146" id="grid-caption"></text>
+      <text class="value" x="150" y="68" id="home-value">—</text>
+      <text class="name" x="150" y="82">Home</text>
 
-      <!-- home -->
-      <circle class="ring" cx="150" cy="60" r="28" />
-      <g class="icon" transform="translate(150 60)">
-        <path d="M -11 -1 L 0 -11 L 11 -1" />
-        <path d="M -8 -1 L -8 11 L 8 11 L 8 -1" />
-        <path d="M -2.5 11 L -2.5 3 L 2.5 3 L 2.5 11" />
+      <!-- grid, lower left -->
+      <g id="grid-node" class="node idle">
+        <g class="icon" transform="translate(52 118)">
+          <path d="M 0 -13 L 0 13" stroke-width="2.6" />
+          <path d="M -10 -7 L 10 -7" />
+          <path d="M -10 -7 L -10 -9.5 M 10 -7 L 10 -9.5" />
+          <path d="M -10 -9.5 Q -12.2 -8 -13 -4" />
+          <path d="M 10 -9.5 Q 12.2 -8 13 -4" />
+          <path d="M -7 13 L 0 2 L 7 13" />
+        </g>
       </g>
-      <text class="label" x="150" y="112">Home</text>
-      <text class="value" x="150" y="130" id="home-value">—</text>
+      <text class="value" x="52" y="152" id="grid-value">—</text>
+      <text class="name" x="52" y="166" id="grid-name">Grid</text>
 
-      <!-- solar -->
-      <circle class="ring" cx="254" cy="60" r="28" />
-      <g class="icon" transform="translate(254 60)">
-        <path d="M -12 6 L -8 -8 L 12 -8 L 8 6 Z" />
-        <path d="M -10 1 L 10 1 M -3.2 -8 L -5 6 M 3.8 -8 L 2 6" />
-        <path d="M 0 9 L 0 12" />
+      <!-- solar, lower right -->
+      <g id="solar-node" class="node idle">
+        <g class="icon filled" transform="translate(248 118)">
+          <circle r="7" />
+          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <path d="M 0 -13.5 L 0 -10.5 M 0 10.5 L 0 13.5" />
+            <path d="M -13.5 0 L -10.5 0 M 10.5 0 L 13.5 0" />
+            <path d="M -9.5 -9.5 L -7.4 -7.4 M 7.4 7.4 L 9.5 9.5" />
+            <path d="M -9.5 9.5 L -7.4 7.4 M 7.4 -7.4 L 9.5 -9.5" />
+          </g>
+        </g>
       </g>
-      <text class="label" x="254" y="112">Solar</text>
-      <text class="value" x="254" y="130" id="solar-value">—</text>
+      <text class="value" x="248" y="152" id="solar-value">—</text>
+      <text class="name" x="248" y="166">Solar</text>
 
-      <line class="line" x1="78" y1="60" x2="120" y2="60" />
-      <line class="line" x1="222" y1="60" x2="180" y2="60" />
+      <!-- The chevron track is clipped to local x 34-78: an extra chevron
+           slides in as the front one slides out, so the 17px march loops
+           seamlessly, and the track ends short of the home wattage text. -->
+      <clipPath id="track">
+        <rect x="34" y="-8" width="44" height="16" />
+      </clipPath>
 
-      <line id="grid-flow" class="flow idle import" x1="78" y1="60" x2="120" y2="60" />
-      <line id="solar-flow" class="flow idle solar" x1="222" y1="60" x2="180" y2="60" />
+      <!-- grid <-> home diagonal: translate to the grid node, rotate onto the
+           path (atan2(-84, 98) = -40.6 deg), then the chevrons live on local x -->
+      <g id="grid-flow" class="flow idle">
+        <g transform="translate(52 118) rotate(-40.6)" clip-path="url(#track)">
+          <g class="chevrons">
+            <path d="M 17 -5.5 L 26 0 L 17 5.5 Z" />
+            <path d="M 34 -5.5 L 43 0 L 34 5.5 Z" />
+            <path d="M 51 -5.5 L 60 0 L 51 5.5 Z" />
+            <path d="M 68 -5.5 L 77 0 L 68 5.5 Z" />
+          </g>
+        </g>
+      </g>
+
+      <!-- solar -> home diagonal: atan2(-84, -98) = -139.4 deg -->
+      <g id="solar-flow" class="flow idle">
+        <g transform="translate(248 118) rotate(-139.4)" clip-path="url(#track)">
+          <g class="chevrons">
+            <path d="M 17 -5.5 L 26 0 L 17 5.5 Z" />
+            <path d="M 34 -5.5 L 43 0 L 34 5.5 Z" />
+            <path d="M 51 -5.5 L 60 0 L 51 5.5 Z" />
+            <path d="M 68 -5.5 L 77 0 L 68 5.5 Z" />
+          </g>
+        </g>
+      </g>
     </svg>
 
     <script type="text/javascript">
-      function format(watts) {
-        if (watts === null || watts === undefined) return '—';
+      function setValue(id, watts) {
+        const el = document.getElementById(id);
 
-        const magnitude = Math.abs(watts);
-        return magnitude >= 1000
-          ? (magnitude / 1000).toFixed(magnitude >= 10000 ? 1 : 2) + ' kW'
-          : Math.round(magnitude) + ' W';
+        if (watts === null || watts === undefined) {
+          el.textContent = '—';
+          return;
+        }
+
+        el.textContent = Math.round(Math.abs(watts)).toLocaleString();
+
+        const unit = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        unit.setAttribute('class', 'unit');
+        unit.textContent = ' W';
+        el.appendChild(unit);
       }
 
       function render(data) {
@@ -167,24 +219,29 @@
         message.hidden = data.paired;
         diagram.hidden = !data.paired;
 
-        document.getElementById('grid-value').textContent = format(data.grid);
-        document.getElementById('home-value').textContent = format(data.consumption);
-        document.getElementById('solar-value').textContent = format(data.solar);
+        setValue('home-value', data.consumption);
+        setValue('grid-value', data.grid);
+        setValue('solar-value', data.solar);
 
-        const gridFlow = document.getElementById('grid-flow');
         const exporting = typeof data.grid === 'number' && data.grid < 0;
         const importing = typeof data.grid === 'number' && data.grid > 0;
 
+        const gridFlow = document.getElementById('grid-flow');
         gridFlow.classList.toggle('idle', !importing && !exporting);
-        gridFlow.classList.toggle('reverse', exporting);
         gridFlow.classList.toggle('export', exporting);
-        gridFlow.classList.toggle('import', !exporting);
 
-        document.getElementById('grid-caption').textContent =
-          exporting ? 'To grid' : importing ? 'From grid' : '';
+        const gridNode = document.getElementById('grid-node');
+        gridNode.classList.toggle('accent', importing);
+        gridNode.classList.toggle('export', exporting);
+        gridNode.classList.toggle('idle', !importing && !exporting);
+
+        document.getElementById('grid-name').textContent =
+          exporting ? 'To Grid' : importing ? 'From Grid' : 'Grid';
 
         const producing = typeof data.solar === 'number' && data.solar > 5;
         document.getElementById('solar-flow').classList.toggle('idle', !producing);
+        document.getElementById('solar-node').classList.toggle('accent', producing);
+        document.getElementById('solar-node').classList.toggle('idle', !producing);
       }
 
       function onHomeyReady(Homey) {
