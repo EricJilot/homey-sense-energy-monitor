@@ -1,7 +1,7 @@
 'use strict';
 
 const SenseDriver = require('../../lib/SenseDriver');
-const { toMilliseconds, crossed } = require('../../lib/duration');
+const { toMilliseconds } = require('../../lib/duration');
 
 class SenseSolarDriver extends SenseDriver {
   async onInit() {
@@ -18,8 +18,9 @@ class SenseSolarDriver extends SenseDriver {
     this.homey.flow.getConditionCard('has_been_producing')
       .registerRunListener((args) => args.device.hasBeenProducing(toMilliseconds(args)));
 
-    this.durationTrigger = this.homey.flow.getDeviceTriggerCard('producing_for');
-    this.durationTrigger.registerRunListener((args, state) => crossed(args, state));
+    this.durationTrigger = this.registerDurationTrigger(
+      this.homey.flow.getDeviceTriggerCard('producing_for'), 'Producing'
+    );
   }
 
   producingForTrigger() {
