@@ -4,5 +4,8 @@
   },
   "1.0.1": {
     "en": "Changed the layout of the widget."
+  },
+  "1.0.2": {
+    "en": "Fixed potential crash senerio in widget."
   }
 }
