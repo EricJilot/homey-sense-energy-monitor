@@ -35,8 +35,10 @@ been run, regardless of how likely it is to work.
 - [x] Exported increases while exporting
 - [x] Homey Energy shows flow from both panels and grid
 - [x] Accumulated totals survive a hub reboot rather than restarting from zero
-- [ ] Midnight rollover: all four counters continue upward rather than resetting
-      (consumed, imported, exported, produced)
+- [x] Midnight rollover: counters continue upward rather than resetting.
+      Confirmed the morning after: exported still carried yesterday's total
+      when overnight export is impossible, and used/imported held multi-day
+      magnitudes rather than a few overnight kWh.
 - [x] Totals refresh at the configured interval. Observed exactly five minutes
       apart on both devices at the default setting.
 
