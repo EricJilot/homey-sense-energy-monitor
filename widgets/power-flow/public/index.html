@@ -77,25 +77,38 @@
         opacity: 0.6;
       }
 
-      /* Chevrons march along the diagonal inside a group the SVG attribute has
-         already translated and rotated, so a plain translateX moves them along
-         the path. One chevron spacing per loop reads as continuous flow. */
-      .chevrons {
-        fill: var(--accent);
-        animation: march 0.9s linear infinite;
+      /* Fixed chevrons per path, like Sense's own view; motion comes from a
+         staggered opacity wave travelling tail-to-tip (document order). */
+      .chevrons path {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 3.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: pulse 1.05s linear infinite;
       }
 
-      #export-flow .chevrons {
-        fill: var(--export);
+      #export-flow .chevrons path {
+        stroke: var(--export);
       }
+
+      .chevrons path:nth-child(2) { animation-delay: 0.15s; }
+      .chevrons path:nth-child(3) { animation-delay: 0.3s; }
+      .chevrons path:nth-child(4) { animation-delay: 0.45s; }
+      .chevrons path:nth-child(5) { animation-delay: 0.6s; }
+      .chevrons path:nth-child(6) { animation-delay: 0.75s; }
+      .chevrons path:nth-child(7) { animation-delay: 0.9s; }
 
       .flow.idle {
         display: none;
       }
 
-      @keyframes march {
-        to {
-          transform: translateX(17px);
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 0.3;
+        }
+        25% {
+          opacity: 1;
         }
       }
 
@@ -153,57 +166,40 @@
       <text class="value" x="248" y="152" id="solar-value">—</text>
       <text class="name" x="248" y="166">Solar</text>
 
-      <!-- The chevron track is clipped to local x 34-78: an extra chevron
-           slides in as the front one slides out, so the 17px march loops
-           seamlessly, and the track ends short of the home wattage text. -->
-      <clipPath id="track">
-        <rect x="34" y="-8" width="44" height="16" />
-      </clipPath>
-
-      <!-- grid <-> home diagonal: translate to the grid node, rotate onto the
+      <!-- grid -> home diagonal: translate to the grid node, rotate onto the
            path (atan2(-84, 98) = -40.6 deg), then the chevrons live on local x -->
       <g id="grid-flow" class="flow idle">
-        <g transform="translate(52 118) rotate(-40.6)" clip-path="url(#track)">
+        <g transform="translate(52 118) rotate(-40.6)">
           <g class="chevrons">
-            <path d="M 17 -5.5 L 26 0 L 17 5.5 Z" />
-            <path d="M 34 -5.5 L 43 0 L 34 5.5 Z" />
-            <path d="M 51 -5.5 L 60 0 L 51 5.5 Z" />
-            <path d="M 68 -5.5 L 77 0 L 68 5.5 Z" />
+            <path d="M 34 -5.5 L 43 0 L 34 5.5" />
+            <path d="M 51 -5.5 L 60 0 L 51 5.5" />
+            <path d="M 68 -5.5 L 77 0 L 68 5.5" />
           </g>
         </g>
       </g>
 
       <!-- solar -> home diagonal: atan2(-84, -98) = -139.4 deg -->
       <g id="solar-flow" class="flow idle">
-        <g transform="translate(248 118) rotate(-139.4)" clip-path="url(#track)">
+        <g transform="translate(248 118) rotate(-139.4)">
           <g class="chevrons">
-            <path d="M 17 -5.5 L 26 0 L 17 5.5 Z" />
-            <path d="M 34 -5.5 L 43 0 L 34 5.5 Z" />
-            <path d="M 51 -5.5 L 60 0 L 51 5.5 Z" />
-            <path d="M 68 -5.5 L 77 0 L 68 5.5 Z" />
+            <path d="M 34 -5.5 L 43 0 L 34 5.5" />
+            <path d="M 51 -5.5 L 60 0 L 51 5.5" />
+            <path d="M 68 -5.5 L 77 0 L 68 5.5" />
           </g>
         </g>
       </g>
 
-      <!-- solar -> grid along the bottom edge, shown while exporting. The
-           longer track gets its own clip window; chevrons enter and leave
-           through its edges so the loop stays seamless. -->
-      <clipPath id="track-bottom">
-        <rect x="34" y="-8" width="130" height="16" />
-      </clipPath>
-
+      <!-- solar -> grid along the bottom edge, shown while exporting -->
       <g id="export-flow" class="flow idle">
-        <g transform="translate(248 118) rotate(180)" clip-path="url(#track-bottom)">
+        <g transform="translate(248 118) rotate(180)">
           <g class="chevrons">
-            <path d="M 17 -5.5 L 26 0 L 17 5.5 Z" />
-            <path d="M 34 -5.5 L 43 0 L 34 5.5 Z" />
-            <path d="M 51 -5.5 L 60 0 L 51 5.5 Z" />
-            <path d="M 68 -5.5 L 77 0 L 68 5.5 Z" />
-            <path d="M 85 -5.5 L 94 0 L 85 5.5 Z" />
-            <path d="M 102 -5.5 L 111 0 L 102 5.5 Z" />
-            <path d="M 119 -5.5 L 128 0 L 119 5.5 Z" />
-            <path d="M 136 -5.5 L 145 0 L 136 5.5 Z" />
-            <path d="M 153 -5.5 L 162 0 L 153 5.5 Z" />
+            <path d="M 34 -5.5 L 43 0 L 34 5.5" />
+            <path d="M 51 -5.5 L 60 0 L 51 5.5" />
+            <path d="M 68 -5.5 L 77 0 L 68 5.5" />
+            <path d="M 85 -5.5 L 94 0 L 85 5.5" />
+            <path d="M 102 -5.5 L 111 0 L 102 5.5" />
+            <path d="M 119 -5.5 L 128 0 L 119 5.5" />
+            <path d="M 136 -5.5 L 145 0 L 136 5.5" />
           </g>
         </g>
       </g>
@@ -274,15 +270,16 @@
       // Dev preview: opening the file directly in a browser (where Homey never
       // calls onHomeyReady) renders mock values from the query string, e.g.
       // index.html?grid=-2400&solar=3200&consumption=800
+      // Without parameters everything stays quiet: dashes and no flows.
       if (location.protocol === 'file:') {
         const query = new URLSearchParams(location.search);
         const num = (key) => (query.has(key) ? Number(query.get(key)) : null);
 
         render({
           paired: true,
-          grid: num('grid') ?? 1800,
-          consumption: num('consumption') ?? 3000,
-          solar: num('solar') ?? 1200,
+          grid: num('grid'),
+          consumption: num('consumption'),
+          solar: num('solar'),
         });
       }
     </script>
