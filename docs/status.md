@@ -89,8 +89,9 @@ been run, regardless of how likely it is to work.
 - [x] Validates at publish level
 - [x] A `--remote` install persists after the CLI exits and across a hub reboot,
       so it is a real install rather than a session tied to the terminal
-- [ ] Published to Test, which would confirm whether the diagnostics report
-      button appears only for store-installed apps
+- [x] Published to Test, which confirmed the diagnostics report button appears
+      for store-installed apps: it shows as "Test" in Homey's app section with
+      a Create Diagnostics Report button
 
 ## Before submitting to the app store
 
