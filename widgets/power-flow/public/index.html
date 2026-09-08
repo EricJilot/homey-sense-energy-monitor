@@ -77,6 +77,22 @@
         opacity: 0.6;
       }
 
+      /* Ring around the home icon: the arc length is the share of consumption
+         currently covered by solar. Butt caps so a 0% arc draws nothing. */
+      .ring-track {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.5;
+        opacity: 0.15;
+      }
+
+      .ring-fill {
+        fill: none;
+        stroke: var(--export);
+        stroke-width: 2.5;
+        stroke-linecap: butt;
+      }
+
       /* Fixed chevrons per path, like Sense's own view; motion comes from a
          staggered opacity wave travelling tail-to-tip (document order). */
       .chevrons path {
@@ -128,7 +144,10 @@
     <p id="message" class="homey-text-small" hidden>No Sense devices yet.</p>
 
     <svg id="diagram" viewBox="0 0 300 178" role="img" aria-label="Power flow">
-      <!-- home, top point of the triangle -->
+      <!-- home, top point of the triangle, ringed by the solar share -->
+      <circle class="ring-track" id="solar-ring-track" cx="150" cy="34" r="22" hidden />
+      <circle class="ring-fill" id="solar-ring" cx="150" cy="34" r="22"
+              transform="rotate(-90 150 34)" hidden />
       <g id="home-node" class="node accent">
         <g class="icon filled" transform="translate(150 34)">
           <path d="M 0 -15 L 15.5 -4.5 L 15.5 13 L 4.5 13 L 4.5 2.5 L -4.5 2.5 L -4.5 13 L -15.5 13 L -15.5 -4.5 Z" />
@@ -136,6 +155,7 @@
       </g>
       <text class="value" x="150" y="68" id="home-value">—</text>
       <text class="name" x="150" y="82">Home</text>
+      <text class="name" x="150" y="96" id="solar-share" hidden></text>
 
       <!-- grid, lower left -->
       <g id="grid-node" class="node idle">
@@ -226,8 +246,10 @@
         const message = document.getElementById('message');
         const diagram = document.getElementById('diagram');
 
-        message.hidden = data.paired;
-        diagram.hidden = !data.paired;
+        // .hidden is an HTMLElement property that does not exist on SVG
+        // elements, so toggle the attribute the [hidden] CSS rule matches.
+        message.toggleAttribute('hidden', data.paired);
+        diagram.toggleAttribute('hidden', !data.paired);
 
         setValue('home-value', data.consumption);
         setValue('grid-value', data.grid);
@@ -253,6 +275,27 @@
         document.getElementById('solar-flow').classList.toggle('idle', !producing);
         document.getElementById('solar-node').classList.toggle('accent', producing);
         document.getElementById('solar-node').classList.toggle('idle', !producing);
+
+        // Share of consumption currently covered by solar, shown as an arc
+        // around the home icon. Hidden entirely when either figure is missing.
+        const share =
+          typeof data.solar === 'number' && typeof data.consumption === 'number' && data.consumption > 0
+            ? Math.min(Math.max(data.solar / data.consumption, 0), 1)
+            : null;
+
+        const ring = document.getElementById('solar-ring');
+        const circumference = 2 * Math.PI * 22;
+
+        document.getElementById('solar-ring-track').toggleAttribute('hidden', share === null);
+        ring.toggleAttribute('hidden', share === null);
+
+        const shareText = document.getElementById('solar-share');
+        shareText.toggleAttribute('hidden', share === null);
+
+        if (share !== null) {
+          ring.setAttribute('stroke-dasharray', `${share * circumference} ${circumference}`);
+          shareText.textContent = `${Math.round(share * 100)}% solar`;
+        }
       }
 
       function onHomeyReady(Homey) {
