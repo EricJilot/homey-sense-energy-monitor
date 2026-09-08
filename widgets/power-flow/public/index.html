@@ -253,7 +253,9 @@
 
         setValue('home-value', data.consumption);
         setValue('grid-value', data.grid);
-        setValue('solar-value', data.solar);
+        // Overnight the inverter's own draw takes solar_w slightly negative;
+        // that is consumption, not production, so show it as zero.
+        setValue('solar-value', typeof data.solar === 'number' ? Math.max(data.solar, 0) : data.solar);
 
         const exporting = typeof data.grid === 'number' && data.grid < 0;
         const importing = typeof data.grid === 'number' && data.grid > 0;
