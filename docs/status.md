@@ -151,6 +151,12 @@ local workaround and the guesswork can be dropped:
 
 - Extensionless CJS subpath imports break under Node's ESM resolver. Worked
   around by `scripts/patch-sense-sdk.js`.
+- The websocket close handler reconnects via a bare `startRealtimeUpdates()`
+  call, so a failed token renew during the ~16 minute socket cycle becomes an
+  unhandled rejection. Observed in the wild as an app crash (401 on renew after
+  a session was revoked, 2026-09-08). The realtime message handler's bare
+  `JSON.parse` has the same exposure. Both guarded by the patch script, which
+  routes reconnect failures through a `reconnectFailed` event.
 - The published types omit every solar field Sense actually sends (`solar_w`,
   `solar_c`, `solar_pct`, `d_solar_w`, `aux`, `power_flow.solar`), and declare
   `to_grid`, `from_grid` and `solar_to_home` as `null` when the first two carry
