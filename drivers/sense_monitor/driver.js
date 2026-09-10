@@ -1,7 +1,7 @@
 'use strict';
 
 const SenseDriver = require('../../lib/SenseDriver');
-const { toMilliseconds, crossed } = require('../../lib/duration');
+const { toMilliseconds } = require('../../lib/duration');
 
 class SenseMonitorDriver extends SenseDriver {
   async onInit() {
@@ -29,13 +29,13 @@ class SenseMonitorDriver extends SenseDriver {
       .registerRunListener((args) => args.device.hasBeenSelfSufficient(toMilliseconds(args)));
 
     this.durationTriggers = {
-      exporting: this.homey.flow.getDeviceTriggerCard('exporting_for'),
-      selfSufficient: this.homey.flow.getDeviceTriggerCard('self_sufficient_for'),
+      exporting: this.registerDurationTrigger(
+        this.homey.flow.getDeviceTriggerCard('exporting_for'), 'Exporting'
+      ),
+      selfSufficient: this.registerDurationTrigger(
+        this.homey.flow.getDeviceTriggerCard('self_sufficient_for'), 'Self-sufficient'
+      ),
     };
-
-    for (const card of Object.values(this.durationTriggers)) {
-      card.registerRunListener((args, state) => crossed(args, state));
-    }
   }
 
   exportingForTrigger() {

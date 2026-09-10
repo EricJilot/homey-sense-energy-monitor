@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
-  <g fill="none" stroke="#000000" stroke-width="44" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M 557 91 L 333 510 L 468 510 L 403 869 L 628 451 L 492 451 Z" />
-    <path d="M 209 303 A 307 307 0 0 0 209 657" />
-    <path d="M 751 303 A 307 307 0 0 1 751 657" />
+   <g fill="none" stroke="#000000" stroke-width="44" stroke-linejoin="round" stroke-linecap="round" clip-rule="evenodd" fill-rule="evenodd">
+    <path d="M 855.21199 728.64262 V 312.94911 L 484.1648 75.237592 113.11762 312.94911 V 728.64262 H 239.81664 V 896.97135 L 484.1648 728.64262 Z" />
   </g>
 </svg>

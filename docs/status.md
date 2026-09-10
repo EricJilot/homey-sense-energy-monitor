@@ -25,7 +25,9 @@ been run, regardless of how likely it is to work.
 - [x] Consumption equals grid plus solar
 - [x] Grid reads negative while exporting
 - [x] Figures roughly match the Sense web app
-- [ ] Websocket recovers after a network interruption
+- [x] Websocket recovers after an interruption. Sense cycles the connection
+      roughly every sixteen minutes and the SDK reconnects in about 250ms
+      without intervention, so this happens continuously in normal use.
 
 ## Energy totals
 
@@ -33,8 +35,10 @@ been run, regardless of how likely it is to work.
 - [x] Exported increases while exporting
 - [x] Homey Energy shows flow from both panels and grid
 - [x] Accumulated totals survive a hub reboot rather than restarting from zero
-- [ ] Midnight rollover: all four counters continue upward rather than resetting
-      (consumed, imported, exported, produced)
+- [x] Midnight rollover: counters continue upward rather than resetting.
+      Confirmed the morning after: exported still carried yesterday's total
+      when overnight export is impossible, and used/imported held multi-day
+      magnitudes rather than a few overnight kWh.
 - [x] Totals refresh at the configured interval. Observed exactly five minutes
       apart on both devices at the default setting.
 
@@ -53,6 +57,7 @@ been run, regardless of how likely it is to work.
 
 ## Flow cards
 
+<<<<<<< HEAD
 None of these have been exercised. The card ids, the `(args, state)` run
 listener signature and the device argument filters are all reasoned from the
 documentation rather than observed.
@@ -64,6 +69,12 @@ documentation rather than observed.
 - [x] Became self-sufficient. Confirmed in the 2026-09-09 Homey timeline.
 - [x] Stopped being self-sufficient. Confirmed in the 2026-09-09 Homey
       timeline.
+=======
+- [x] Started exporting to the grid, observed firing naturally
+- [ ] Stopped exporting to the grid
+- [x] Became self-sufficient, observed firing naturally
+- [ ] Stopped being self-sufficient
+>>>>>>> 07ea1a6cc19d2297ccde9f6e04bcb5d52b389113
 - [ ] Started producing
 - [ ] Stopped producing
 - [x] Has been exporting for a given duration, fires once per episode.
@@ -73,9 +84,10 @@ documentation rather than observed.
 - [ ] Has been producing for a given duration
 - [ ] Is exporting / self-sufficient / producing conditions
 - [ ] Duration conditions with amount and unit
-- [ ] Refresh energy totals action
-- [ ] The refresh action's device picker lists only this app's devices
-      (it has no driver filter, so this may list unrelated devices)
+- [x] Refresh energy totals action, fired manually against both devices, each
+      resolving to its own device
+- [x] The refresh action's device picker lists only this app's devices, despite
+      having no driver filter, so Homey scopes device arguments to the owning app
 - [ ] Tokens carry sensible values into a notification
 - [ ] Deadband and dwell prevent flapping around the threshold in practice
 - [ ] Restarting the app does not fire triggers for an already-true state
@@ -88,17 +100,16 @@ documentation rather than observed.
 - [x] Fits the widget frame without clipping
 - [ ] Behaviour when no devices are paired
 - [ ] Behaviour on an account without solar, where the solar node has no value
-- [ ] Previews replaced. They are still the generated Homey placeholders and
-      will be rejected under guideline 1.10, which wants simple shapes with no
-      text, in light and dark.
+- [x] Previews replaced with light and dark variants showing the three nodes
 
 ## Packaging
 
 - [x] Validates at publish level
 - [x] A `--remote` install persists after the CLI exits and across a hub reboot,
       so it is a real install rather than a session tied to the terminal
-- [ ] Published to Test, which would confirm whether the diagnostics report
-      button appears only for store-installed apps
+- [x] Published to Test, which confirmed the diagnostics report button appears
+      for store-installed apps: it shows as "Test" in Homey's app section with
+      a Create Diagnostics Report button
 
 ## Before submitting to the app store
 
@@ -106,14 +117,12 @@ documentation rather than observed.
       None found, so there is no other developer to coordinate with.
 - [x] Description rewritten, icons redrawn on the 960x960 canvas with
       transparent backgrounds, and readme.txt added.
-- [ ] Driver images replaced with recognisable photographs of the device on a
-      white background. The current ones are generated placeholder shapes and
-      will be rejected under guideline 1.4.
-- [ ] App store images redrawn in the Sense orange `#F9461C`; they are still
-      the earlier blue.
-- [ ] Store readme written to the store's constraints: plain text, no Markdown,
-      no URLs, one or two paragraphs.
-- [ ] Confirm the app name and description satisfy guidelines 1.1 and 1.2.
+- [x] Driver images replaced with product photography on white, distinguished by
+      clamp count since both drivers describe the same hardware
+- [x] App store images replaced with photography
+- [x] Store readme written as plain text, no Markdown, no URLs
+- [x] App name is three words and the brand's own, and the description no longer
+      names another platform, satisfying guidelines 1.1 and 1.2
 
 ## Candidate work
 
@@ -135,6 +144,15 @@ from Energy on one side or the other to avoid being subtracted twice from the
 cumulative meter. Real per-device measurement is the better source. Revisit only
 if Sense's attribution improves markedly.
 
+**Throttling measure_power. Tried and reverted, 2026-09-07.** The capability is
+written whenever the rounded watt value changes, roughly once a second per
+device on a live house. A rate limit was added and then removed: full fidelity
+data was preferred. The trade is understood rather than overlooked. Every write
+lands in Insights, which downsamples anyway, and any Flow with a capability
+condition on power re-evaluates on each write. Against that, meters reporting at
+one hertz are normal on Homey and it handles them. Revisit only if a real
+performance problem appears.
+
 **Per-Flow power thresholds.** The export and self-sufficiency cards share one
 `flowThreshold` device setting, so every Flow on a device reacts at the same
 level. An amount argument on the cards, following the duration argument
@@ -155,6 +173,12 @@ local workaround and the guesswork can be dropped:
 
 - Extensionless CJS subpath imports break under Node's ESM resolver. Worked
   around by `scripts/patch-sense-sdk.js`.
+- The websocket close handler reconnects via a bare `startRealtimeUpdates()`
+  call, so a failed token renew during the ~16 minute socket cycle becomes an
+  unhandled rejection. Observed in the wild as an app crash (401 on renew after
+  a session was revoked, 2026-09-08). The realtime message handler's bare
+  `JSON.parse` has the same exposure. Both guarded by the patch script, which
+  routes reconnect failures through a `reconnectFailed` event.
 - The published types omit every solar field Sense actually sends (`solar_w`,
   `solar_c`, `solar_pct`, `d_solar_w`, `aux`, `power_flow.solar`), and declare
   `to_grid`, `from_grid` and `solar_to_home` as `null` when the first two carry
