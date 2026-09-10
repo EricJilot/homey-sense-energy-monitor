@@ -10,5 +10,8 @@
   },
   "1.0.3": {
     "en": "fixed bug that caused a crash, updated app icon"
+  },
+  "1.0.4": {
+    "en": "Added a time delay variable to keep flows from over writing"
   }
 }
