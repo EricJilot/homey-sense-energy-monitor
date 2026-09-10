@@ -57,14 +57,19 @@ None of these have been exercised. The card ids, the `(args, state)` run
 listener signature and the device argument filters are all reasoned from the
 documentation rather than observed.
 
-- [ ] Started exporting to the grid
-- [ ] Stopped exporting to the grid
-- [ ] Became self-sufficient
-- [ ] Stopped being self-sufficient
+- [x] Started exporting to the grid. Confirmed in the 2026-09-09 Homey
+      timeline.
+- [x] Stopped exporting to the grid. Confirmed in the 2026-09-09 Homey
+      timeline.
+- [x] Became self-sufficient. Confirmed in the 2026-09-09 Homey timeline.
+- [x] Stopped being self-sufficient. Confirmed in the 2026-09-09 Homey
+      timeline.
 - [ ] Started producing
 - [ ] Stopped producing
-- [ ] Has been exporting for a given duration, fires once per episode
-- [ ] Has been self-sufficient for a given duration
+- [x] Has been exporting for a given duration, fires once per episode.
+      Confirmed in the 2026-09-09 Homey timeline.
+- [x] Has been self-sufficient for a given duration. Confirmed in the
+      2026-09-09 Homey timeline.
 - [ ] Has been producing for a given duration
 - [ ] Is exporting / self-sufficient / producing conditions
 - [ ] Duration conditions with amount and unit
@@ -111,6 +116,12 @@ documentation rather than observed.
 - [ ] Confirm the app name and description satisfy guidelines 1.1 and 1.2.
 
 ## Candidate work
+
+**High-frequency `measure_power_changed` events.** The 2026-09-09 Homey
+timeline shows live power updates roughly once per second, which caused a test
+Flow listening to this capability to be disabled. Decide whether the update
+frequency should be reduced or whether the behavior should be documented as
+expected for realtime telemetry.
 
 **Per-appliance breakdown. Decided against, 2026-09-07.** Sense exposes
 detected appliances through `getMonitorDevices()` and the `devices` array in
