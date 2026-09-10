@@ -108,6 +108,22 @@
       }
     },
     {
+      "id": "liveUpdateSeconds",
+      "type": "number",
+      "label": {
+        "en": "Live update interval"
+      },
+      "value": 10,
+      "min": 1,
+      "max": 60,
+      "units": {
+        "en": "seconds"
+      },
+      "hint": {
+        "en": "How often live power readings are written to the device. Sense streams about once a second, but Homey disables Flows that trigger too often, so “power changed” Flows need a calmer pace."
+      }
+    },
+    {
       "id": "flowThreshold",
       "type": "number",
       "label": {

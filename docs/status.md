@@ -52,15 +52,11 @@ been run, regardless of how likely it is to work.
 ## Settings
 
 - [ ] Changing the energy refresh interval reschedules the refresh
+- [ ] Changing the live update interval changes the write pace
 - [ ] Changing the Flow threshold affects when triggers fire
 - [ ] Changing the Flow delay affects how long a change must persist
 
 ## Flow cards
-
-<<<<<<< HEAD
-None of these have been exercised. The card ids, the `(args, state)` run
-listener signature and the device argument filters are all reasoned from the
-documentation rather than observed.
 
 - [x] Started exporting to the grid. Confirmed in the 2026-09-09 Homey
       timeline.
@@ -69,12 +65,6 @@ documentation rather than observed.
 - [x] Became self-sufficient. Confirmed in the 2026-09-09 Homey timeline.
 - [x] Stopped being self-sufficient. Confirmed in the 2026-09-09 Homey
       timeline.
-=======
-- [x] Started exporting to the grid, observed firing naturally
-- [ ] Stopped exporting to the grid
-- [x] Became self-sufficient, observed firing naturally
-- [ ] Stopped being self-sufficient
->>>>>>> 07ea1a6cc19d2297ccde9f6e04bcb5d52b389113
 - [ ] Started producing
 - [ ] Stopped producing
 - [x] Has been exporting for a given duration, fires once per episode.
@@ -126,11 +116,25 @@ documentation rather than observed.
 
 ## Candidate work
 
-**High-frequency `measure_power_changed` events.** The 2026-09-09 Homey
-timeline shows live power updates roughly once per second, which caused a test
-Flow listening to this capability to be disabled. Decide whether the update
-frequency should be reduced or whether the behavior should be documented as
-expected for realtime telemetry.
+**Shared Sense session per monitor. Fixed, 2026-09-09.** The monitor and solar
+devices each held their own SenseApiClient over the same sign-in. Sense rotates
+refresh tokens on renew and rejects the superseded one, so whichever device
+renewed second always died with a 401 — seen as the 2026-09-08 crash and again
+in the 2026-09-10 diagnostics report, where solar stayed healthy while the
+monitor's renew failed every five minutes. Devices now acquire one shared
+client per monitor from the app, giving a single token chain and one
+websocket. Pairs whose sessions have already diverged need one re-pair. An
+account with several monitors would still hold one session per monitor; no
+such account has been seen.
+
+**Throttling measure_power. Reinstated, 2026-09-09.** First tried and reverted
+in favour of full-fidelity data. The 2026-09-09 timeline settled it the other
+way: live power written about once a second made Homey disable a test Flow
+listening on `measure_power_changed`, so unthrottled writes break user Flows.
+Writes are now paced by a per-device "Live update interval" setting (default
+10 s, minimum 1 s). The deadband latches still see every sample, so trigger
+timing is unaffected, and Insights loses nothing it would have kept, since it
+downsamples anyway.
 
 **Per-appliance breakdown. Decided against, 2026-09-07.** Sense exposes
 detected appliances through `getMonitorDevices()` and the `devices` array in
@@ -143,15 +147,6 @@ arrive as a duplicate alongside its real counterpart and would need excluding
 from Energy on one side or the other to avoid being subtracted twice from the
 cumulative meter. Real per-device measurement is the better source. Revisit only
 if Sense's attribution improves markedly.
-
-**Throttling measure_power. Tried and reverted, 2026-09-07.** The capability is
-written whenever the rounded watt value changes, roughly once a second per
-device on a live house. A rate limit was added and then removed: full fidelity
-data was preferred. The trade is understood rather than overlooked. Every write
-lands in Insights, which downsamples anyway, and any Flow with a capability
-condition on power re-evaluates on each write. Against that, meters reporting at
-one hertz are normal on Homey and it handles them. Revisit only if a real
-performance problem appears.
 
 **Per-Flow power thresholds.** The export and self-sufficiency cards share one
 `flowThreshold` device setting, so every Flow on a device reacts at the same
