@@ -28,5 +28,13 @@
     "large": "/assets/images/large.png",
     "small": "/assets/images/small.png",
     "xlarge": "/assets/images/xlarge.png"
+  },
+  "homeyCommunityTopicId": 159640,
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "ericjilot"
+      }
+    }
   }
 }
