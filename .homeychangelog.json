@@ -15,6 +15,6 @@
     "en": "Added a time delay variable to keep flows from over writing"
   },
   "1.0.5": {
-    "en": "Improved Sense token renewal and added in-place device repair with MFA, preserving existing devices and energy totals. Reuse recent authentication when adding device types and refreshed both driver icons."
+    "en": "Improved Sense token renewal and added in-place device repair with MFA, preserving existing devices and energy totals. Reuse recent authentication when adding device types, added Timeline updates for grid export, production, self-sufficiency, and repair recovery, and refreshed both driver icons."
   }
 }

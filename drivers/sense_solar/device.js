@@ -15,6 +15,7 @@ class SenseSolarDevice extends SenseDevice {
 
     if (producing !== null) {
       this.log(producing ? 'Started producing' : 'Stopped producing', Math.round(watts), 'W');
+      this.notifyTimeline(producing ? 'started producing' : 'stopped producing');
       this.driver.productionTrigger(producing).trigger(this, { power: Math.round(watts) })
         .catch((err) => this.error('Production trigger failed:', err));
     }

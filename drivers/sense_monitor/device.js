@@ -29,6 +29,7 @@ class SenseMonitorDevice extends SenseDevice {
     const exporting = this.trackState('exporting', this.band(-grid, threshold), dwell);
     if (exporting !== null) {
       this.log(exporting ? 'Started exporting to the grid' : 'Stopped exporting to the grid', tokens);
+      this.notifyTimeline(exporting ? 'started exporting to the grid' : 'stopped exporting to the grid');
       this.driver.exportTrigger(exporting).trigger(this, tokens)
         .catch((err) => this.error('Export trigger failed:', err));
     }
@@ -44,6 +45,7 @@ class SenseMonitorDevice extends SenseDevice {
     const sufficient = this.trackState('selfSufficient', this.band(surplus, 0, -threshold), dwell);
     if (sufficient !== null) {
       this.log(sufficient ? 'Became self-sufficient' : 'Stopped being self-sufficient', tokens);
+      this.notifyTimeline(sufficient ? 'became self-sufficient' : 'stopped being self-sufficient');
       this.driver.selfSufficientTrigger(sufficient).trigger(this, tokens)
         .catch((err) => this.error('Self-sufficiency trigger failed:', err));
     }

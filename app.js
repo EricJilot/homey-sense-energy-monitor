@@ -11,6 +11,7 @@ class SenseEnergyMonitorApp extends Homey.App {
 
     this.senseClients = new Map();
     this.pairingSession = null;
+    this.repairTimelineMonitors = new Set();
 
     this.homey.flow.getActionCard('refresh_totals')
       .registerRunListener(({ device }) => device.refreshTrends());
@@ -51,6 +52,28 @@ class SenseEnergyMonitorApp extends Homey.App {
 
   getSenseClient(monitorId) {
     return this.senseClients.get(String(monitorId))?.client ?? null;
+  }
+
+  async notifyRepairRequired(device) {
+    const monitorId = device.getStoreValue('monitorId');
+    if (monitorId == null) return;
+
+    const key = String(monitorId);
+    if (this.repairTimelineMonitors.has(key)) return;
+
+    this.repairTimelineMonitors.add(key);
+    await this.homey.notifications.createNotification({
+      excerpt: `${device.getName()} needs repair to reconnect to Sense.`,
+    }).catch((err) => this.error('Could not create repair Timeline notification:', err));
+  }
+
+  async notifyRepairRecovered(device) {
+    const monitorId = device.getStoreValue('monitorId');
+    if (monitorId == null || !this.repairTimelineMonitors.delete(String(monitorId))) return;
+
+    await this.homey.notifications.createNotification({
+      excerpt: `${device.getName()} reconnected to Sense.`,
+    }).catch((err) => this.error('Could not create recovery Timeline notification:', err));
   }
 
   // The monitor and solar devices describe the same physical Sense monitor and

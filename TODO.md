@@ -7,3 +7,7 @@
       device remains and cumulative energy values do not reset.
 - [ ] Repair one device and confirm its sibling for the same monitor resumes.
 - [ ] Reboot Homey after repair and confirm both devices restore their sessions.
+- [ ] Confirm grid export, producing and self-sufficiency transitions create
+      one Timeline entry each, with the correct device name and no repeats.
+- [ ] Confirm one needs-repair entry appears per monitor after auth failure,
+      followed by one recovery entry after successful repair.

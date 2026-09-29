@@ -16,6 +16,8 @@ been run, regardless of how likely it is to work.
 - [ ] Pairing the second device type during an active session reuses login/MFA
 - [ ] Repairing an expired session preserves device identity and energy totals
 - [ ] Repairing one device resumes its sibling device for the same monitor
+- [ ] Grid export, production, self-sufficiency and auth-recovery transitions
+      appear in the Homey Timeline
 - [ ] Account with two or more monitors lists all of them
 - [ ] Account without solar: solar driver offers nothing
 - [ ] Expired or revoked session shows the repair flow
