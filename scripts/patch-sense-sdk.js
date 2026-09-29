@@ -6,7 +6,11 @@
 // runtime does not. Rewrite each specifier to an explicit .js path, but only
 // when the target file actually exists. Idempotent; safe to re-run.
 //
-// A second patch guards the websocket close handler's reconnect: the SDK calls
+// Another patch serializes token renewal: API calls and websocket reconnects
+// can overlap while Sense rotates a single-use refresh token. They must share
+// one renewal request and its resulting access/refresh token pair.
+//
+// A separate patch guards the websocket close handler's reconnect: the SDK calls
 // startRealtimeUpdates() there without await or catch, so a failed token renew
 // during a reconnect (Sense cycles the socket every ~16 minutes) becomes an
 // unhandled rejection that kills the whole app. Route the failure through a
@@ -44,6 +48,22 @@ const PARSE_GUARDED = `      try {
         this._logger.warn("Could not handle realtime message:", err);
       }`;
 
+const REFRESH_METHOD = `async refreshAccessTokenIfNeeded() {
+    if (!this.session) {`;
+const REFRESH_SINGLE_FLIGHT = `async refreshAccessTokenIfNeeded() {
+    if (this._refreshPromise) return this._refreshPromise;
+
+    this._refreshPromise = this.refreshAccessTokenIfNeededInternal();
+    try {
+      return await this._refreshPromise;
+    } finally {
+      this._refreshPromise = undefined;
+    }
+  }
+
+  async refreshAccessTokenIfNeededInternal() {
+    if (!this.session) {`;
+
 function resolvesWithJsExtension(specifier) {
   if (specifier.startsWith('.') || path.extname(specifier)) return false;
   return SEARCH_PATHS.some((base) => fs.existsSync(path.join(base, `${specifier}.js`)));
@@ -72,6 +92,11 @@ for (const file of TARGETS) {
   if (!result.includes('Could not handle realtime message') && result.includes(PARSE_CALL)) {
     result = result.replace(PARSE_CALL, PARSE_GUARDED);
     rewritten.push('guarded message parse');
+  }
+
+  if (!result.includes('refreshAccessTokenIfNeededInternal') && result.includes(REFRESH_METHOD)) {
+    result = result.replace(REFRESH_METHOD, REFRESH_SINGLE_FLIGHT);
+    rewritten.push('serialized token refresh');
   }
 
   if (result !== source) {

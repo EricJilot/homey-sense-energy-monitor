@@ -13,9 +13,12 @@ been run, regardless of how likely it is to work.
 - [x] Solar driver offers only monitors with solar connected
 - [x] Session survives an app restart without re-pairing
 - [x] Session survives a hub reboot, with devices reconnecting on their own
+- [ ] Pairing the second device type during an active session reuses login/MFA
+- [ ] Repairing an expired session preserves device identity and energy totals
+- [ ] Repairing one device resumes its sibling device for the same monitor
 - [ ] Account with two or more monitors lists all of them
 - [ ] Account without solar: solar driver offers nothing
-- [ ] Expired or revoked session shows the re-pair message
+- [ ] Expired or revoked session shows the repair flow
 
 ## Live telemetry
 
@@ -123,9 +126,20 @@ renewed second always died with a 401 — seen as the 2026-09-08 crash and again
 in the 2026-09-10 diagnostics report, where solar stayed healthy while the
 monitor's renew failed every five minutes. Devices now acquire one shared
 client per monitor from the app, giving a single token chain and one
-websocket. Pairs whose sessions have already diverged need one re-pair. An
-account with several monitors would still hold one session per monitor; no
-such account has been seen.
+websocket. Devices whose old token is already rejected can use the in-place
+Repair flow instead of being removed and re-added. An account with several
+monitors would still hold one session per monitor; no such account has been
+seen.
+
+**Token renewal and device repair. Implemented, pending Homey verification.**
+The postinstall SDK patch makes concurrent access-token renewals share one
+request, preventing callers from racing Sense's rotating refresh token. A
+rejected refresh token now stops repeated trend requests and exposes a Homey
+Repair flow; authenticating there updates the existing device and shared
+monitor client without deleting its cumulative-energy store. Recently
+authenticated pairing sessions are reused across driver types for up to 30
+minutes of inactivity. See `TODO.md` for the Homey and hardware checks still
+needed.
 
 **Throttling measure_power. Reinstated, 2026-09-09.** First tried and reverted
 in favour of full-fidelity data. The 2026-09-09 timeline settled it the other

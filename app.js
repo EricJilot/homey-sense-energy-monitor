@@ -3,14 +3,54 @@
 const Homey = require('homey');
 const { SenseApiClient } = require('sense-js-sdk');
 
+const PAIRING_SESSION_TTL_MS = 30 * 60 * 1000;
+
 class SenseEnergyMonitorApp extends Homey.App {
   async onInit() {
     this.log('Sense Energy Monitor app initialized');
 
     this.senseClients = new Map();
+    this.pairingSession = null;
 
     this.homey.flow.getActionCard('refresh_totals')
       .registerRunListener(({ device }) => device.refreshTrends());
+  }
+
+  getPairingClient() {
+    const cached = this.pairingSession;
+    if (!cached || cached.expiresAt <= Date.now() || !cached.client.session) {
+      this.pairingSession = null;
+      return null;
+    }
+
+    cached.expiresAt = Date.now() + PAIRING_SESSION_TTL_MS;
+    return cached.client;
+  }
+
+  cachePairingClient(client) {
+    if (!client?.session) return;
+
+    this.pairingSession = {
+      client,
+      expiresAt: Date.now() + PAIRING_SESSION_TTL_MS,
+    };
+  }
+
+  clearPairingClient(client) {
+    if (!client || this.pairingSession?.client === client) {
+      this.pairingSession = null;
+    }
+  }
+
+  syncPairingSession(session) {
+    const client = this.pairingSession?.client;
+    if (!session || !client?.session || client.session.userId !== session.userId) return;
+
+    client.session = session;
+  }
+
+  getSenseClient(monitorId) {
+    return this.senseClients.get(String(monitorId))?.client ?? null;
   }
 
   // The monitor and solar devices describe the same physical Sense monitor and

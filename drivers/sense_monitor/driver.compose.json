@@ -90,6 +90,42 @@
       "template": "add_devices"
     }
   ],
+  "repair": [
+    {
+      "id": "login",
+      "template": "login_credentials",
+      "options": {
+        "logo": "icon.svg",
+        "usernameLabel": {
+          "en": "Email address"
+        },
+        "usernamePlaceholder": {
+          "en": "you@example.com"
+        },
+        "passwordLabel": {
+          "en": "Password"
+        }
+      }
+    },
+    {
+      "id": "mfa",
+      "template": "pincode",
+      "options": {
+        "type": "number",
+        "length": 6,
+        "title": {
+          "en": "Two-factor authentication"
+        },
+        "hint": {
+          "en": "Enter the 6-digit code from your authenticator app."
+        }
+      }
+    },
+    {
+      "id": "done",
+      "template": "done"
+    }
+  ],
   "settings": [
     {
       "id": "energyRefreshMinutes",
