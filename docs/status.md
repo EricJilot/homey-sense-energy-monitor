@@ -177,6 +177,15 @@ triggers the Flow.
 **Retry and backoff.** Lower priority than it first appeared: the SDK reconnects
 the websocket itself, so only the periodic trend requests are unprotected.
 
+**Sentry diagnostics. Planned, not implemented.** Use the Developer-tier Sentry
+project for opt-in error reporting, not as a mirror of Homey's logs. Keep it
+disabled by default, capture only selected sanitized failures, and rate-limit
+repeated events. Before adding `@sentry/node`, verify its supported Node version
+against the Homey runtime and update the dependency lock with npm. Configure the
+project DSN without exposing Sense credentials, tokens, account email, monitor
+IDs, or raw API payloads. This is operational diagnostics; intentionally omit
+it from the Homey store changelog.
+
 ## Upstream
 
 `sense-js-sdk` has no open issues. Two findings here are worth reporting so the
