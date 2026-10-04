@@ -1,6 +1,9 @@
 # Homey Verification
 
-- [ ] Run `npx homey app validate --level debug` after installing dependencies.
+- [x] Run `npx homey app validate --level debug` after installing dependencies.
+      Passed at the stricter `publish` level, 2026-10-03, after re-running
+      `scripts/patch-sense-sdk.js` (a fresh npm install had left the SDK
+      unpatched).
 - [ ] Pair Sense Monitor, then Sense Solar; confirm the second driver reuses
       the authenticated session without another login or MFA prompt.
 - [ ] Repair a device with an expired/revoked session; confirm the same Homey
