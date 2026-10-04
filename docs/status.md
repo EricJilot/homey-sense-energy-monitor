@@ -4,6 +4,14 @@ Running record of what has been exercised on real hardware (a Homey Pro and a
 solar-equipped Sense monitor) and what has not. Anything not ticked has never
 been run, regardless of how likely it is to work.
 
+## Latest overnight run
+
+The test build ran from about 20:00 on 2026-10-03 through the morning of
+2026-10-04. Reported behavior was as expected, and Timeline entries appeared
+the following morning: Started Producing, Became Self-Sufficient, and
+exporting to grid. Duplicate behavior was not recorded, so the detailed
+Timeline checks below remain open.
+
 ## Pairing and session
 
 - [x] Sign-in with a correct email and password
@@ -13,7 +21,7 @@ been run, regardless of how likely it is to work.
 - [x] Solar driver offers only monitors with solar connected
 - [x] Session survives an app restart without re-pairing
 - [x] Session survives a hub reboot, with devices reconnecting on their own
-- [ ] Pairing the second device type during an active session reuses login/MFA
+- [x] Pairing the second device type during an active session reuses login/MFA
 - [ ] Repairing an expired session preserves device identity and energy totals
 - [ ] Repairing one device resumes its sibling device for the same monitor
 - [ ] Grid export, production, self-sufficiency and auth-recovery transitions
@@ -70,8 +78,8 @@ been run, regardless of how likely it is to work.
 - [x] Became self-sufficient. Confirmed in the 2026-09-09 Homey timeline.
 - [x] Stopped being self-sufficient. Confirmed in the 2026-09-09 Homey
       timeline.
-- [ ] Started producing
-- [ ] Stopped producing
+- [x] Started producing. Confirmed in the 2026-10-04 Homey timeline.
+- [x] Stopped producing
 - [x] Has been exporting for a given duration, fires once per episode.
       Confirmed in the 2026-09-09 Homey timeline.
 - [x] Has been self-sufficient for a given duration. Confirmed in the

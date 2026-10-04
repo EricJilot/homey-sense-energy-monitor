@@ -12,6 +12,8 @@
 - [ ] Reboot Homey after repair and confirm both devices restore their sessions.
 - [ ] Confirm grid export, producing and self-sufficiency transitions create
       one Timeline entry each, with the correct device name and no repeats.
+      Observed on 2026-10-04: Started Producing, Became Self-Sufficient and
+      exporting to grid. Device-name and duplicate checks remain.
 - [ ] Confirm one needs-repair entry appears per monitor after auth failure,
       followed by one recovery entry after successful repair.
 
