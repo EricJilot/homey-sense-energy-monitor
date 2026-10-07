@@ -5,6 +5,9 @@ node_modules/
 .homey/
 .env
 
+# Raw Sense captures and their cached session token
+captures/
+
 # Python
 .venv/
 __pycache__/

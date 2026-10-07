@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "postinstall": "node scripts/patch-sense-sdk.js",
+    "capture": "node scripts/capture-sense.js",
     "lint": "echo Lint configured via Homey CLI",
     "test": "echo Tests can be added as needed"
   },
