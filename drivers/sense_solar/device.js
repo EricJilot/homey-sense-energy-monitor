@@ -36,7 +36,7 @@ class SenseSolarDevice extends SenseDevice {
   }
 
   async onTrends(trends) {
-    await this.setEnergy('meter_power', await this.accumulateDaily('produced', trends.production?.total));
+    await this.setEnergy('meter_power', await this.accumulateDaily('produced', trends.production?.total, trends.start));
   }
 }
 

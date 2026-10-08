@@ -81,9 +81,9 @@ class SenseMonitorDevice extends SenseDevice {
   }
 
   async onTrends(trends) {
-    await this.setEnergy('meter_power', await this.accumulateDaily('consumed', trends.consumption?.total));
-    await this.setEnergy('meter_power.imported', await this.accumulateDaily('imported', trends.from_grid));
-    await this.setEnergy('meter_power.exported', await this.accumulateDaily('exported', trends.to_grid));
+    await this.setEnergy('meter_power', await this.accumulateDaily('consumed', trends.consumption?.total, trends.start));
+    await this.setEnergy('meter_power.imported', await this.accumulateDaily('imported', trends.from_grid, trends.start));
+    await this.setEnergy('meter_power.exported', await this.accumulateDaily('exported', trends.to_grid, trends.start));
   }
 }
 
