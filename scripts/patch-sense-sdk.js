@@ -64,6 +64,42 @@ const REFRESH_SINGLE_FLIGHT = `async refreshAccessTokenIfNeeded() {
   async refreshAccessTokenIfNeededInternal() {
     if (!this.session) {`;
 
+const START_METHOD = 'async startRealtimeUpdates(monitorId) {';
+const START_SINGLE_FLIGHT = `async startRealtimeUpdates(monitorId) {
+    if (this._realtimeStartPromise) return this._realtimeStartPromise;
+
+    this._realtimeStartPromise = this.startRealtimeUpdatesInternal(monitorId);
+    try {
+      return await this._realtimeStartPromise;
+    } finally {
+      this._realtimeStartPromise = undefined;
+    }
+  }
+
+  async startRealtimeUpdatesInternal(monitorId) {`;
+
+const SOCKET_CREATE = 'this._socket = new WebSocket(url);';
+const SOCKET_CAPTURE = `const socket = new WebSocket(url);
+    this._socket = socket;`;
+const SOCKET_CLOSE = 'this._socket.addEventListener("close", () => {';
+const SOCKET_CLOSE_GUARDED = `this._socket.addEventListener("close", () => {
+      if (this._socket !== socket) return;`;
+const SOCKET_STOP = `this._socket.close();
+      this._socket = void 0;
+      this._socketIsConnecting = false;`;
+const SOCKET_STOP_DETACHED = `const socket = this._socket;
+      this._socket = void 0;
+      this._socketIsConnecting = false;
+      socket.close();`;
+
+function patchRequired(source, before, after, marker) {
+  if (source.includes(marker)) return source;
+  if (!source.includes(before)) {
+    throw new Error(`patch-sense-sdk: unsupported SDK source for ${marker}`);
+  }
+  return source.replace(before, after);
+}
+
 function resolvesWithJsExtension(specifier) {
   if (specifier.startsWith('.') || path.extname(specifier)) return false;
   return SEARCH_PATHS.some((base) => fs.existsSync(path.join(base, `${specifier}.js`)));
@@ -98,6 +134,14 @@ for (const file of TARGETS) {
     result = result.replace(REFRESH_METHOD, REFRESH_SINGLE_FLIGHT);
     rewritten.push('serialized token refresh');
   }
+
+  // Both devices resume on sessionChanged. Share their start request, and keep
+  // intentional stops (repair or teardown) from auto-reconnecting an old socket.
+  result = patchRequired(result, START_METHOD, START_SINGLE_FLIGHT, 'startRealtimeUpdatesInternal');
+  result = patchRequired(result, SOCKET_CREATE, SOCKET_CAPTURE, 'const socket = new WebSocket(url);');
+  result = patchRequired(result, SOCKET_CLOSE, SOCKET_CLOSE_GUARDED, 'if (this._socket !== socket) return;');
+  result = patchRequired(result, SOCKET_STOP, SOCKET_STOP_DETACHED, 'const socket = this._socket;');
+  if (result !== source) rewritten.push('repair-safe websocket lifecycle');
 
   if (result !== source) {
     fs.writeFileSync(filePath, result);

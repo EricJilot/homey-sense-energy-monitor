@@ -8,7 +8,14 @@
       the authenticated session without another login or MFA prompt.
 - [ ] Repair a device with an expired/revoked session; confirm the same Homey
       device remains and cumulative energy values do not reset.
+      Verified on 2026-10-08: the existing Sense Solar device accepted repair
+      with MFA after a session expired. Live power and energy updates resumed
+      after restarting the app. Counter preservation has not been confirmed.
+      The subsequent repair/websocket fix still needs a hardware check for
+      recovery without an app restart.
 - [ ] Repair one device and confirm its sibling for the same monitor resumes.
+- [x] Restart the app in Homey after repair and confirm readings resume.
+      Verified on 2026-10-08.
 - [ ] Reboot Homey after repair and confirm both devices restore their sessions.
 - [ ] Confirm grid export, producing and self-sufficiency transitions create
       one Timeline entry each, with the correct device name and no repeats.

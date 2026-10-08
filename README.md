@@ -31,6 +31,11 @@ Two devices are paired independently from the same Sense account.
 Live power arrives continuously over a websocket. Energy totals are refreshed on
 an interval that defaults to five minutes and is configurable per device.
 
+If readings stop and the device reports an expired Sense sign-in, use its
+Repair flow to sign in again. Repair preserves energy counters, restores trend
+polling, and replaces the shared live connection with one using the new session.
+Repairing either device reconnects both devices for that monitor.
+
 ## Why two devices
 
 Homey Energy treats a device as either a consumer or a producer, and derives home
@@ -67,6 +72,7 @@ Requires Node.js 18+ and a Homey Pro on the same network.
 npm install
 npx homey app run --remote      # upload to the hub and stream logs
 npx homey app validate --level debug
+npm test                       # offline repair and websocket regression tests
 ```
 
 `--remote` runs the app on the hub. Plain `homey app run` executes in a local
@@ -93,7 +99,9 @@ imports `dayjs/plugin/*` and `lodash/isEqual` without file extensions. Neither
 dependency ships an `exports` map, so Node's ESM resolver rejects them and the
 drivers fail to load. `scripts/patch-sense-sdk.js` runs on `postinstall` and
 rewrites those specifiers to explicit `.js` paths. This is an upstream bug; the
-script can be dropped once it is fixed.
+script also serializes token renewal and websocket startup, reports reconnect
+failures, and prevents a stopped socket from reconnecting during repair or
+teardown. These workarounds can be dropped once fixed upstream.
 
 ## License
 

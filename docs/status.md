@@ -141,12 +141,19 @@ Repair flow instead of being removed and re-added. An account with several
 monitors would still hold one session per monitor; no such account has been
 seen.
 
-**Token renewal and device repair. Implemented, pending Homey verification.**
+**Token renewal and device repair. Implemented, partially verified on Homey.**
 The postinstall SDK patch makes concurrent access-token renewals share one
 request, preventing callers from racing Sense's rotating refresh token. A
 rejected refresh token now stops repeated trend requests and exposes a Homey
 Repair flow; authenticating there updates the existing device and shared
-monitor client without deleting its cumulative-energy store. Recently
+monitor client without deleting its cumulative-energy store. On 2026-10-08,
+repair of the existing solar device with MFA succeeded after an expired
+session; live power and energy updates resumed after an app restart.
+Immediate recovery without a restart was not working in that tested build.
+A subsequent local fix replaces the socket during repair, serializes shared
+socket startup, and prevents stopped sockets from reconnecting. Offline
+regression tests pass; hardware verification of that fix and confirmation of
+counter preservation remain outstanding. Recently
 authenticated pairing sessions are reused across driver types for up to 30
 minutes of inactivity. See `TODO.md` for the Homey and hardware checks still
 needed.
